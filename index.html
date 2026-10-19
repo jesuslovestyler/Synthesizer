@@ -381,6 +381,9 @@
           <button type="button" class="preset-btn" data-preset="bass">Deep Bass</button>
           <button type="button" class="preset-btn" data-preset="organ">Church Organ</button>
           <button type="button" class="preset-btn" data-preset="chime">Chime</button>
+          <button type="button" class="preset-btn" data-preset="epiano">Electric Piano</button>
+          <button type="button" class="preset-btn" data-preset="strings">Warm Strings</button>
+          <button type="button" class="preset-btn" data-preset="choir">Soft Choir</button>
         </div>
       </section>
 
@@ -479,6 +482,24 @@
           </div>
         </section>
 
+        <section class="card" aria-label="Arpeggiator">
+          <h2>Arpeggiator</h2>
+          <div class="toggle-row">
+            <div class="t-label">Arpeggiator<small>Held notes take turns instead of sounding together</small></div>
+            <button type="button" class="switch" id="arpToggle" role="switch" aria-checked="false" aria-label="Arpeggiator on or off"></button>
+          </div>
+          <div class="wave-row" id="arpPatternRow" style="margin-top: 12px; margin-bottom: 8px;">
+            <button type="button" class="wave-btn" data-arp-pattern="up">Up</button>
+            <button type="button" class="wave-btn" data-arp-pattern="down">Down</button>
+            <button type="button" class="wave-btn" data-arp-pattern="updown">Up–Down</button>
+          </div>
+          <div class="slider-row">
+            <label for="arpRate">Rate</label>
+            <input type="range" id="arpRate" min="2" max="16" step="0.5" value="8" />
+            <span class="val" id="arpRateVal"></span>
+          </div>
+        </section>
+
         <section class="card volume-card" aria-label="Volume">
           <h2>Volume</h2>
           <div class="slider-row">
@@ -505,7 +526,8 @@
         cutoffHz: 3600, resonance: 1,
         lfoRate: 5, lfoDepth: 4,
         echoTime: 0.27, echoMix: 14,
-        volume: 70
+        volume: 70,
+        arpOn: false, arpPattern: "up", arpRate: 8
       };
 
       var PRESETS = {
@@ -513,7 +535,10 @@
         lead:  { wave: "sawtooth", detuneOn: true,  detune: 5,  attack: 0.01, decay: 0.18, sustain: 80, release: 0.18, cutoffHz: 8500,  resonance: 5,   lfoRate: 5.5, lfoDepth: 7, echoTime: 0.21, echoMix: 18, volume: 66 },
         bass:  { wave: "sine",     detuneOn: false, detune: 0,  attack: 0.005, decay: 0.22, sustain: 55, release: 0.12, cutoffHz: 420,   resonance: 2.5, lfoRate: 0,   lfoDepth: 0, echoTime: 0.2,  echoMix: 0,  volume: 78 },
         organ: { wave: "square",   detuneOn: true,  detune: 3,  attack: 0.01, decay: 0.05, sustain: 100, release: 0.07, cutoffHz: 3800,  resonance: 0.6, lfoRate: 4.6, lfoDepth: 3, echoTime: 0.3,  echoMix: 16, volume: 62 },
-        chime: { wave: "sine",     detuneOn: true,  detune: 9,  attack: 0.002, decay: 1.4, sustain: 0,  release: 1.2,  cutoffHz: 12000, resonance: 1,   lfoRate: 0,   lfoDepth: 0, echoTime: 0.34, echoMix: 30, volume: 70 }
+        chime: { wave: "sine",     detuneOn: true,  detune: 9,  attack: 0.002, decay: 1.4, sustain: 0,  release: 1.2,  cutoffHz: 12000, resonance: 1,   lfoRate: 0,   lfoDepth: 0, echoTime: 0.34, echoMix: 30, volume: 70 },
+        epiano:  { wave: "triangle", detuneOn: true,  detune: 10, attack: 0.004, decay: 1.1, sustain: 22, release: 0.7,  cutoffHz: 2600,  resonance: 0.8, lfoRate: 0,   lfoDepth: 0, echoTime: 0.24, echoMix: 12, volume: 72 },
+        strings: { wave: "sawtooth", detuneOn: true,  detune: 14, attack: 0.55,  decay: 0.6, sustain: 82, release: 1.3,  cutoffHz: 950,   resonance: 0.7, lfoRate: 4.8, lfoDepth: 5, echoTime: 0.32, echoMix: 18, volume: 70 },
+        choir:   { wave: "triangle", detuneOn: true,  detune: 8,  attack: 0.9,   decay: 0.8, sustain: 78, release: 1.9,  cutoffHz: 1350,  resonance: 0.5, lfoRate: 0.7, lfoDepth: 4, echoTime: 0.42, echoMix: 27, volume: 72 }
       };
 
       /* ================= Audio graph ================= */
@@ -629,7 +654,6 @@
         if (o2) { o2.start(t); }
 
         active.set(midi, { o1: o1, o2: o2, env: env, g1: g1, g2: g2 });
-        markKey(midi, true);
         updateNowPlaying();
       }
 
@@ -637,7 +661,6 @@
         var v = active.get(midi);
         if (!v) { return; }
         active.delete(midi);
-        markKey(midi, false);
         updateNowPlaying();
         if (!ctx) { return; }
         var t = ctx.currentTime;
@@ -661,13 +684,108 @@
       function allNotesOff() {
         var keys = Array.from(active.keys());
         for (var i = 0; i < keys.length; i++) { noteOff(keys[i]); }
+        heldNotes.forEach(function (m) { markKey(m, false); });
+        heldNotes.clear();
+        arpCurrent = null;
+        stopArpTimer();
+        updateNowPlaying();
+      }
+
+      /* ================= Held notes & arpeggiator ================= */
+      var heldNotes = new Set(); // midis physically held (touch, mouse, computer keys)
+      var arpTimer = null;
+      var arpStep = 0;
+      var arpCurrent = null; // midi currently sounding because of the arp
+
+      function pressNote(midi) {
+        ensureAudio();
+        if (heldNotes.has(midi)) { return; }
+        heldNotes.add(midi);
+        markKey(midi, true);
+        if (state.arpOn) {
+          if (heldNotes.size === 1) { arpStep = 0; arpStepNow(); startArpTimer(); }
+        } else {
+          noteOn(midi);
+        }
+        updateNowPlaying();
+      }
+
+      function releaseNote(midi) {
+        if (!heldNotes.has(midi)) { return; }
+        heldNotes.delete(midi);
+        markKey(midi, false);
+        if (state.arpOn) {
+          if (arpCurrent === midi) { noteOff(midi); arpCurrent = null; }
+          if (heldNotes.size === 0) { stopArpTimer(); }
+        } else {
+          noteOff(midi);
+        }
+        updateNowPlaying();
+      }
+
+      function arpIndex(step, n) {
+        if (n <= 1) { return 0; }
+        if (state.arpPattern === "down") { return n - 1 - (step % n); }
+        if (state.arpPattern === "updown") {
+          var cycle = 2 * n - 2;
+          var pos = step % cycle;
+          return pos < n ? pos : cycle - pos;
+        }
+        return step % n; // up
+      }
+
+      function arpStepNow() {
+        var seq = Array.from(heldNotes).sort(function (a, b) { return a - b; });
+        if (!seq.length) { arpCurrent = null; return; }
+        var next = seq[arpIndex(arpStep, seq.length)];
+        arpStep++;
+        if (arpCurrent !== null) { noteOff(arpCurrent); }
+        noteOn(next);
+        arpCurrent = next;
+      }
+
+      function startArpTimer() {
+        stopArpTimer();
+        arpTimer = window.setInterval(arpStepNow, 1000 / state.arpRate);
+      }
+      function stopArpTimer() {
+        if (arpTimer !== null) { window.clearInterval(arpTimer); arpTimer = null; }
+      }
+
+      function setArp(on) {
+        if (state.arpOn === on) { return; }
+        state.arpOn = on;
+        var tgl = document.getElementById("arpToggle");
+        if (tgl) { tgl.setAttribute("aria-checked", on ? "true" : "false"); }
+        // Silence whatever is sounding now, then restart from the held notes.
+        var sounding = Array.from(active.keys());
+        for (var i = 0; i < sounding.length; i++) { noteOff(sounding[i]); }
+        arpCurrent = null;
+        stopArpTimer();
+        if (on) {
+          if (heldNotes.size) { arpStep = 0; arpStepNow(); startArpTimer(); }
+        } else {
+          heldNotes.forEach(function (m) { noteOn(m); });
+        }
+        updateNowPlaying();
       }
 
       /* ================= Keyboard ================= */
-      var baseOctave = 4; // keyboard shows C(baseOctave) .. C(baseOctave+2)
-      var MIN_OCT = 2, MAX_OCT = 6;
-      var WHITE_OFFSETS = [0, 2, 4, 5, 7, 9, 11, 12, 14, 16, 17, 19, 21, 23, 24];
-      var BLACK_OFFSETS = [1, 3, 6, 8, 10, 13, 15, 18, 20, 22];
+      var baseOctave = 4; // leftmost C on screen; the range can reach C1 .. C8
+      var MIN_OCT = 1, TOP_OCT = 8;
+      var wideMq = window.matchMedia("(min-width: 721px)");
+      function visibleOctaves() { return wideMq.matches ? 3 : 2; }
+      function maxBaseOctave() { return TOP_OCT - visibleOctaves(); }
+      function octaveOffsets() {
+        var whites = [], blacks = [], o, i;
+        var w = [0, 2, 4, 5, 7, 9, 11], b = [1, 3, 6, 8, 10];
+        for (o = 0; o < visibleOctaves(); o++) {
+          for (i = 0; i < w.length; i++) { whites.push(12 * o + w[i]); }
+          for (i = 0; i < b.length; i++) { blacks.push(12 * o + b[i]); }
+        }
+        whites.push(12 * visibleOctaves());
+        return { whites: whites, blacks: blacks };
+      }
       var keyEls = new Map();
       var keyboardEl = document.getElementById("keyboard");
       var rangeLabel = document.getElementById("rangeLabel");
@@ -687,7 +805,8 @@
       }
 
       function updateNowPlaying() {
-        var midis = Array.from(active.keys()).sort(function (a, b) { return a - b; });
+        var src = heldNotes.size ? Array.from(heldNotes) : Array.from(active.keys());
+        var midis = src.sort(function (a, b) { return a - b; });
         if (!midis.length) { nowPlayingEl.textContent = ""; return; }
         var names = midis.map(midiName).join(" · ");
         nowPlayingEl.innerHTML = "";
@@ -699,6 +818,8 @@
       function buildKeyboard() {
         keyboardEl.innerHTML = "";
         keyEls.clear();
+        var offs = octaveOffsets();
+        var WHITE_OFFSETS = offs.whites, BLACK_OFFSETS = offs.blacks;
         var baseMidi = 12 * (baseOctave + 1); // C of base octave
         var i, off, midi, el;
 
@@ -745,9 +866,17 @@
           keyboardEl.appendChild(el);
           keyEls.set(midi, el);
         }
-        rangeLabel.textContent = "C" + baseOctave + " – C" + (baseOctave + 2);
+        rangeLabel.textContent = "C" + baseOctave + " – C" + (baseOctave + visibleOctaves());
         octDownBtn.disabled = baseOctave <= MIN_OCT;
-        octUpBtn.disabled = baseOctave >= MAX_OCT;
+        octUpBtn.disabled = baseOctave >= maxBaseOctave();
+        heldNotes.forEach(function (m) { markKey(m, true); });
+      }
+
+      if (wideMq.addEventListener) {
+        wideMq.addEventListener("change", function () {
+          if (baseOctave > maxBaseOctave()) { baseOctave = maxBaseOctave(); }
+          buildKeyboard();
+        });
       }
 
       /* Pointer playing: track each pointer so multi-touch chords work. */
@@ -763,7 +892,7 @@
         e.preventDefault();
         var midi = parseInt(el.dataset.midi, 10);
         pointers.set(e.pointerId, midi);
-        noteOn(midi);
+        pressNote(midi);
       });
       keyboardEl.addEventListener("pointerenter", function (e) {
         // Mouse glissando: slide across keys while holding the button.
@@ -772,14 +901,14 @@
         if (!el) { return; }
         var midi = parseInt(el.dataset.midi, 10);
         if (pointers.get(e.pointerId) !== midi) {
-          noteOff(pointers.get(e.pointerId));
+          releaseNote(pointers.get(e.pointerId));
           pointers.set(e.pointerId, midi);
-          noteOn(midi);
+          pressNote(midi);
         }
       }, true);
       function pointerEnd(e) {
         if (pointers.has(e.pointerId)) {
-          noteOff(pointers.get(e.pointerId));
+          releaseNote(pointers.get(e.pointerId));
           pointers.delete(e.pointerId);
         }
       }
@@ -789,9 +918,10 @@
 
       function shiftOctave(dir) {
         var next = baseOctave + dir;
-        if (next < MIN_OCT || next > MAX_OCT) { return; }
+        if (next < MIN_OCT || next > maxBaseOctave()) { return; }
         allNotesOff();
         pointers.clear();
+        heldCodes.clear();
         baseOctave = next;
         buildKeyboard();
       }
@@ -810,11 +940,11 @@
         if (off === undefined) { return; }
         var midi = 12 * (baseOctave + 1) + off;
         heldCodes.set(e.code, midi);
-        noteOn(midi);
+        pressNote(midi);
       });
       window.addEventListener("keyup", function (e) {
         if (heldCodes.has(e.code)) {
-          noteOff(heldCodes.get(e.code));
+          releaseNote(heldCodes.get(e.code));
           heldCodes.delete(e.code);
         }
       });
@@ -839,7 +969,8 @@
         release: $("release"), cutoff: $("cutoff"), resonance: $("resonance"),
         lfoRate: $("lfoRate"), lfoDepth: $("lfoDepth"),
         echoTime: $("echoTime"), echoMix: $("echoMix"), volume: $("volume"),
-        detuneToggle: $("detuneToggle")
+        detuneToggle: $("detuneToggle"),
+        arpRate: $("arpRate"), arpToggle: $("arpToggle")
       };
 
       function refreshLabels() {
@@ -855,6 +986,7 @@
         $("echoTimeVal").textContent = fmtSec(state.echoTime);
         $("echoMixVal").textContent = state.echoMix === 0 ? "off" : state.echoMix + "%";
         $("volumeVal").textContent = state.volume + "%";
+        $("arpRateVal").textContent = state.arpRate + " notes/s";
       }
 
       function refreshControlUI() {
@@ -871,8 +1003,13 @@
         els.echoMix.value = state.echoMix;
         els.volume.value = state.volume;
         els.detuneToggle.setAttribute("aria-checked", state.detuneOn ? "true" : "false");
+        els.arpRate.value = state.arpRate;
+        els.arpToggle.setAttribute("aria-checked", state.arpOn ? "true" : "false");
         var waveBtns = document.querySelectorAll("#waveRow .wave-btn");
         waveBtns.forEach(function (b) { b.classList.toggle("active", b.dataset.wave === state.wave); });
+        document.querySelectorAll("#arpPatternRow .wave-btn").forEach(function (b) {
+          b.classList.toggle("active", b.dataset.arpPattern === state.arpPattern);
+        });
         refreshLabels();
       }
 
@@ -927,6 +1064,28 @@
         els.detuneToggle.setAttribute("aria-checked", state.detuneOn ? "true" : "false");
         clearPresetHighlight();
       });
+
+      els.arpToggle.addEventListener("click", function () {
+        ensureAudio();
+        setArp(!state.arpOn);
+      });
+
+      document.querySelectorAll("#arpPatternRow .wave-btn").forEach(function (b) {
+        b.addEventListener("click", function () {
+          ensureAudio();
+          state.arpPattern = b.dataset.arpPattern;
+          arpStep = 0;
+          refreshControlUI();
+        });
+      });
+
+      els.arpRate.addEventListener("input", function () {
+        ensureAudio();
+        state.arpRate = parseFloat(els.arpRate.value);
+        refreshLabels();
+        if (arpTimer !== null) { startArpTimer(); }
+      });
+      els.arpRate.addEventListener("pointerdown", ensureAudio);
 
       document.querySelectorAll("#presets .preset-btn").forEach(function (b) {
         b.addEventListener("click", function () {
