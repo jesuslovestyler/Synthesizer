@@ -106,22 +106,36 @@
         margin: 0 0 10px;
         letter-spacing: 0.01em;
       }
-      /* ---------- Presets ---------- */
-      .preset-family { margin-top: 14px; }
-      .preset-family:first-child { margin-top: 0; }
-      .preset-family h3 {
-        font-size: 13px;
-        font-weight: 700;
-        letter-spacing: 0.07em;
-        text-transform: uppercase;
-        color: var(--ink-soft);
-        margin: 0 0 8px;
+      /* ---------- Preset bar ---------- */
+      .preset-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
       }
-      .presets { display: flex; flex-wrap: wrap; gap: 8px; }
-      .preset-btn {
-        flex: 1 1 30%;
+      .preset-bar label {
+        font-weight: 700;
+        font-size: 15.5px;
+        flex: 0 0 auto;
+      }
+      #presetSelect {
+        flex: 1 1 190px;
+        min-width: 0;
         min-height: 48px;
-        padding: 10px 8px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1.5px solid var(--card-edge);
+        background: var(--bg);
+        color: var(--ink);
+        font: inherit;
+        font-weight: 600;
+        font-size: 15.5px;
+        cursor: pointer;
+      }
+      .mini-btn {
+        flex: 0 0 auto;
+        min-height: 48px;
+        padding: 10px 14px;
         border-radius: 12px;
         border: 1.5px solid var(--card-edge);
         background: var(--bg);
@@ -131,12 +145,7 @@
         font-size: 15px;
         cursor: pointer;
       }
-      .preset-btn.active {
-        background: var(--accent);
-        border-color: var(--accent-deep);
-        color: #fff8ee;
-      }
-      .preset-btn:active { transform: translateY(1px); }
+      .mini-btn:active { transform: translateY(1px); background: var(--accent-soft); }
       /* ---------- Keyboard ---------- */
       .kb-head {
         display: flex;
@@ -176,9 +185,12 @@
         text-align: right;
       }
       .now-playing b { color: var(--accent-deep); font-weight: 700; }
+      .kb-flex { display: flex; gap: 10px; align-items: stretch; }
       .keyboard {
         position: relative;
         display: flex;
+        flex: 1 1 auto;
+        min-width: 0;
         height: clamp(150px, 32vw, 220px);
         border-radius: 12px;
         overflow: hidden;
@@ -242,6 +254,57 @@
         .key .kbd-hint { display: none; }
         .now-playing { margin-left: 0; width: 100%; text-align: center; }
       }
+      /* ---------- Pitch bend strip ---------- */
+      .bend {
+        flex: 0 0 46px;
+        position: relative;
+        border-radius: 12px;
+        background: var(--track);
+        border: 1px solid var(--card-edge);
+        touch-action: none;
+        cursor: ns-resize;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+      }
+      .bend::before {
+        content: "";
+        position: absolute;
+        left: 7px;
+        right: 7px;
+        top: 50%;
+        height: 2px;
+        margin-top: -1px;
+        background: var(--ink-soft);
+        opacity: 0.55;
+        pointer-events: none;
+      }
+      .bend-thumb {
+        position: absolute;
+        left: 5px;
+        right: 5px;
+        height: 54px;
+        top: 50%;
+        transform: translateY(-50%);
+        border-radius: 9px;
+        background: var(--accent);
+        border: 2px solid #fff8ee;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        pointer-events: none;
+      }
+      .bend-label {
+        position: absolute;
+        bottom: 6px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        pointer-events: none;
+      }
       /* ---------- Controls ---------- */
       .controls {
         display: grid;
@@ -254,6 +317,15 @@
         .controls { grid-template-columns: 1fr; }
       }
       .wave-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+      .wave-row:last-child { margin-bottom: 0; }
+      .row-label {
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        margin: 2px 0 6px;
+      }
       .wave-btn {
         flex: 1 1 20%;
         min-height: 46px;
@@ -275,7 +347,7 @@
         padding: 5px 0;
       }
       .slider-row label {
-        flex: 0 0 86px;
+        flex: 0 0 96px;
         font-size: 14.5px;
         font-weight: 600;
         line-height: 1.2;
@@ -386,56 +458,55 @@
 
       <section class="card" aria-label="Presets">
         <h2>Presets</h2>
-        <div id="presets">
-          <div class="preset-family">
-            <h3>Keys &amp; Bells</h3>
-            <div class="presets">
-              <button type="button" class="preset-btn" data-preset="epiano">Electric Piano</button>
-              <button type="button" class="preset-btn" data-preset="organ">Church Organ</button>
-              <button type="button" class="preset-btn" data-preset="chime">Chime</button>
-              <button type="button" class="preset-btn" data-preset="musicbox">Music Box</button>
-              <button type="button" class="preset-btn" data-preset="harpsichord">Harpsichord</button>
-              <button type="button" class="preset-btn" data-preset="bell">Cathedral Bell</button>
-              <button type="button" class="preset-btn" data-preset="kalimba">Kalimba</button>
-            </div>
-          </div>
-          <div class="preset-family">
-            <h3>Pads</h3>
-            <div class="presets">
-              <button type="button" class="preset-btn" data-preset="pad">Soft Pad</button>
-              <button type="button" class="preset-btn" data-preset="strings">Warm Strings</button>
-              <button type="button" class="preset-btn" data-preset="choir">Soft Choir</button>
-              <button type="button" class="preset-btn" data-preset="shimmer">Shimmer Pad</button>
-              <button type="button" class="preset-btn" data-preset="ocean">Ocean Pad</button>
-              <button type="button" class="preset-btn" data-preset="nightsky">Night Sky</button>
-            </div>
-          </div>
-          <div class="preset-family">
-            <h3>Leads</h3>
-            <div class="presets">
-              <button type="button" class="preset-btn" data-preset="lead">Bright Lead</button>
-              <button type="button" class="preset-btn" data-preset="squarelead">Square Lead</button>
-              <button type="button" class="preset-btn" data-preset="brass">Saw Brass</button>
-              <button type="button" class="preset-btn" data-preset="flute">Breathy Flute</button>
-            </div>
-          </div>
-          <div class="preset-family">
-            <h3>Bass</h3>
-            <div class="presets">
-              <button type="button" class="preset-btn" data-preset="bass">Deep Bass</button>
-              <button type="button" class="preset-btn" data-preset="subbass">Sub Bass</button>
-              <button type="button" class="preset-btn" data-preset="funkbass">Funk Bass</button>
-              <button type="button" class="preset-btn" data-preset="upright">Upright Pluck</button>
-            </div>
-          </div>
-          <div class="preset-family">
-            <h3>Plucks &amp; Fun</h3>
-            <div class="presets">
-              <button type="button" class="preset-btn" data-preset="marimba">Marimba</button>
-              <button type="button" class="preset-btn" data-preset="banjo">Banjo Pluck</button>
-              <button type="button" class="preset-btn" data-preset="eightbit">8-Bit Hero</button>
-            </div>
-          </div>
+        <div class="preset-bar">
+          <label for="presetSelect">Preset</label>
+          <select id="presetSelect" aria-label="Choose a preset">
+            <option value="custom">Custom —</option>
+            <optgroup label="Keys &amp; Bells">
+              <option value="epiano">Electric Piano</option>
+              <option value="organ">Church Organ</option>
+              <option value="chime">Chime</option>
+              <option value="musicbox">Music Box</option>
+              <option value="harpsichord">Harpsichord</option>
+              <option value="bell">Cathedral Bell</option>
+              <option value="kalimba">Kalimba</option>
+              <option value="lofi">Lo-Fi Keys</option>
+            </optgroup>
+            <optgroup label="Pads">
+              <option value="pad">Soft Pad</option>
+              <option value="strings">Warm Strings</option>
+              <option value="choir">Soft Choir</option>
+              <option value="shimmer">Shimmer Pad</option>
+              <option value="ocean">Ocean Pad</option>
+              <option value="nightsky">Night Sky</option>
+              <option value="cathedral">Cathedral Shimmer</option>
+              <option value="glass">Glass Pad</option>
+              <option value="cosmic">Cosmic Sweep</option>
+            </optgroup>
+            <optgroup label="Leads">
+              <option value="lead">Bright Lead</option>
+              <option value="squarelead">Square Lead</option>
+              <option value="brass">Saw Brass</option>
+              <option value="flute">Breathy Flute</option>
+              <option value="analogbrass">Analog Brass</option>
+            </optgroup>
+            <optgroup label="Bass">
+              <option value="bass">Deep Bass</option>
+              <option value="subbass">Sub Bass</option>
+              <option value="funkbass">Funk Bass</option>
+              <option value="upright">Upright Pluck</option>
+              <option value="squelch">Squelch Bass</option>
+              <option value="subrunner">Sub Runner</option>
+            </optgroup>
+            <optgroup label="Plucks &amp; Fun">
+              <option value="marimba">Marimba</option>
+              <option value="banjo">Banjo Pluck</option>
+              <option value="eightbit">8-Bit Hero</option>
+              <option value="berlin">Berlin Sequence</option>
+            </optgroup>
+          </select>
+          <button type="button" class="mini-btn" id="diceBtn" aria-label="Randomize all controls">🎲 Surprise me</button>
+          <button type="button" class="mini-btn" id="initBtn" aria-label="Return to a plain default patch">Init</button>
         </div>
       </section>
 
@@ -449,26 +520,60 @@
           <button type="button" class="oct-btn" id="octUp" aria-label="Octave up">+</button>
           <div class="now-playing" id="nowPlaying" aria-live="polite"></div>
         </div>
-        <div class="keyboard" id="keyboard" role="group" aria-label="Piano keyboard"></div>
+        <div class="kb-flex">
+          <div class="bend" id="bendStrip" role="slider" tabindex="0" aria-label="Pitch bend, drag up or down" aria-valuemin="-2" aria-valuemax="2" aria-valuenow="0">
+            <div class="bend-thumb" id="bendThumb"></div>
+            <span class="bend-label">Bend</span>
+          </div>
+          <div class="keyboard" id="keyboard" role="group" aria-label="Piano keyboard"></div>
+        </div>
       </section>
 
       <div class="controls">
-        <section class="card" aria-label="Voice">
-          <h2>Voice</h2>
+        <section class="card" aria-label="Sound sources">
+          <h2>Sound Sources</h2>
+          <p class="row-label">Oscillator 1</p>
           <div class="wave-row" id="waveRow">
             <button type="button" class="wave-btn" data-wave="sine">Sine</button>
             <button type="button" class="wave-btn" data-wave="triangle">Triangle</button>
             <button type="button" class="wave-btn" data-wave="square">Square</button>
             <button type="button" class="wave-btn" data-wave="sawtooth">Sawtooth</button>
           </div>
+          <p class="row-label">Oscillator 2</p>
+          <div class="wave-row" id="wave2Row">
+            <button type="button" class="wave-btn" data-wave2="sine">Sine</button>
+            <button type="button" class="wave-btn" data-wave2="triangle">Triangle</button>
+            <button type="button" class="wave-btn" data-wave2="square">Square</button>
+            <button type="button" class="wave-btn" data-wave2="sawtooth">Sawtooth</button>
+          </div>
           <div class="toggle-row">
-            <div class="t-label">Second voice<small>A detuned twin oscillator for thickness</small></div>
-            <button type="button" class="switch" id="detuneToggle" role="switch" aria-checked="true" aria-label="Second detuned voice on or off"></button>
+            <div class="t-label">Second voice<small>Oscillator 2 on or off — it thickens the sound</small></div>
+            <button type="button" class="switch" id="detuneToggle" role="switch" aria-checked="true" aria-label="Second oscillator on or off"></button>
+          </div>
+          <div class="slider-row">
+            <label for="oscMix">Osc mix</label>
+            <input type="range" id="oscMix" min="0" max="100" step="1" value="50" />
+            <span class="val" id="oscMixVal"></span>
           </div>
           <div class="slider-row">
             <label for="detune">Detune</label>
             <input type="range" id="detune" min="-50" max="50" step="1" value="6" />
             <span class="val" id="detuneVal"></span>
+          </div>
+          <div class="slider-row">
+            <label for="subLevel">Sub-osc</label>
+            <input type="range" id="subLevel" min="0" max="100" step="1" value="0" />
+            <span class="val" id="subLevelVal"></span>
+          </div>
+          <div class="slider-row">
+            <label for="pulseWidth">Pulse width</label>
+            <input type="range" id="pulseWidth" min="5" max="95" step="1" value="50" />
+            <span class="val" id="pulseWidthVal"></span>
+          </div>
+          <div class="slider-row">
+            <label for="noiseLevel">Noise</label>
+            <input type="range" id="noiseLevel" min="0" max="100" step="1" value="0" />
+            <span class="val" id="noiseLevelVal"></span>
           </div>
         </section>
 
@@ -498,6 +603,11 @@
 
         <section class="card" aria-label="Filter">
           <h2>Filter</h2>
+          <div class="wave-row" id="filterTypeRow">
+            <button type="button" class="wave-btn" data-ftype="lowpass">Low-pass</button>
+            <button type="button" class="wave-btn" data-ftype="bandpass">Band-pass</button>
+            <button type="button" class="wave-btn" data-ftype="highpass">High-pass</button>
+          </div>
           <div class="slider-row">
             <label for="cutoff">Cutoff</label>
             <input type="range" id="cutoff" min="0" max="1000" step="1" value="620" />
@@ -508,20 +618,65 @@
             <input type="range" id="resonance" min="0" max="20" step="0.1" value="1" />
             <span class="val" id="resonanceVal"></span>
           </div>
+          <div class="slider-row">
+            <label for="keyTrack">Key tracking</label>
+            <input type="range" id="keyTrack" min="0" max="100" step="1" value="0" />
+            <span class="val" id="keyTrackVal"></span>
+          </div>
+          <div class="slider-row">
+            <label for="fEnvAmt">Env amount</label>
+            <input type="range" id="fEnvAmt" min="0" max="100" step="1" value="0" />
+            <span class="val" id="fEnvAmtVal"></span>
+          </div>
+          <div class="slider-row">
+            <label for="fEnvAttack">Env attack</label>
+            <input type="range" id="fEnvAttack" min="0.002" max="0.5" step="0.002" value="0.01" />
+            <span class="val" id="fEnvAttackVal"></span>
+          </div>
+          <div class="slider-row">
+            <label for="fEnvDecay">Env decay</label>
+            <input type="range" id="fEnvDecay" min="0.02" max="1.5" step="0.01" value="0.3" />
+            <span class="val" id="fEnvDecayVal"></span>
+          </div>
         </section>
 
-        <section class="card" aria-label="Warmth">
-          <h2>Warmth</h2>
+        <section class="card" aria-label="Modulation">
+          <h2>Modulation</h2>
+          <p class="row-label">LFO 1 target</p>
+          <div class="wave-row" id="lfoTargetRow">
+            <button type="button" class="wave-btn" data-ltarget="pitch">Pitch</button>
+            <button type="button" class="wave-btn" data-ltarget="filter">Filter</button>
+            <button type="button" class="wave-btn" data-ltarget="amp">Amp</button>
+          </div>
           <div class="slider-row">
-            <label for="lfoRate">Vibrato rate</label>
+            <label for="lfoRate">LFO 1 rate</label>
             <input type="range" id="lfoRate" min="0" max="12" step="0.1" value="5" />
             <span class="val" id="lfoRateVal"></span>
           </div>
           <div class="slider-row">
-            <label for="lfoDepth">Vibrato depth</label>
+            <label for="lfoDepth">LFO 1 depth</label>
             <input type="range" id="lfoDepth" min="0" max="50" step="1" value="4" />
             <span class="val" id="lfoDepthVal"></span>
           </div>
+          <div class="slider-row">
+            <label for="lfo2Rate">LFO 2 rate</label>
+            <input type="range" id="lfo2Rate" min="0.02" max="4" step="0.01" value="0.3" />
+            <span class="val" id="lfo2RateVal"></span>
+          </div>
+          <div class="slider-row">
+            <label for="lfo2Depth">LFO 2 depth</label>
+            <input type="range" id="lfo2Depth" min="0" max="100" step="1" value="0" />
+            <span class="val" id="lfo2DepthVal"></span>
+          </div>
+          <div class="slider-row">
+            <label for="glide">Glide</label>
+            <input type="range" id="glide" min="0" max="0.5" step="0.005" value="0" />
+            <span class="val" id="glideVal"></span>
+          </div>
+        </section>
+
+        <section class="card" aria-label="Effects">
+          <h2>Effects</h2>
           <div class="slider-row">
             <label for="echoTime">Echo time</label>
             <input type="range" id="echoTime" min="0.03" max="0.8" step="0.01" value="0.27" />
@@ -531,6 +686,36 @@
             <label for="echoMix">Echo mix</label>
             <input type="range" id="echoMix" min="0" max="60" step="1" value="14" />
             <span class="val" id="echoMixVal"></span>
+          </div>
+          <div class="slider-row">
+            <label for="reverbSize">Reverb size</label>
+            <input type="range" id="reverbSize" min="0" max="100" step="1" value="35" />
+            <span class="val" id="reverbSizeVal"></span>
+          </div>
+          <div class="slider-row">
+            <label for="reverbMix">Reverb mix</label>
+            <input type="range" id="reverbMix" min="0" max="60" step="1" value="0" />
+            <span class="val" id="reverbMixVal"></span>
+          </div>
+          <div class="slider-row">
+            <label for="chorusRate">Chorus rate</label>
+            <input type="range" id="chorusRate" min="0.05" max="6" step="0.05" value="0.8" />
+            <span class="val" id="chorusRateVal"></span>
+          </div>
+          <div class="slider-row">
+            <label for="chorusDepth">Chorus depth</label>
+            <input type="range" id="chorusDepth" min="0" max="100" step="1" value="30" />
+            <span class="val" id="chorusDepthVal"></span>
+          </div>
+          <div class="slider-row">
+            <label for="chorusMix">Chorus mix</label>
+            <input type="range" id="chorusMix" min="0" max="60" step="1" value="0" />
+            <span class="val" id="chorusMixVal"></span>
+          </div>
+          <div class="slider-row">
+            <label for="drive">Drive</label>
+            <input type="range" id="drive" min="0" max="100" step="1" value="0" />
+            <span class="val" id="driveVal"></span>
           </div>
         </section>
 
@@ -570,47 +755,79 @@
 
       /* ================= State ================= */
       var CUTOFF_MIN = 60, CUTOFF_MAX = 14000;
-      var state = {
-        wave: "triangle",
-        detuneOn: true,
-        detune: 6,
+
+      // Neutral values for the v4 controls, merged under every preset so the
+      // original 24 keep sounding like themselves unless a preset says otherwise.
+      var NEUTRAL = {
+        wave2: "sine", oscMix: 50, subLevel: 0, pulseWidth: 50, noiseLevel: 0,
+        filterType: "lowpass", fEnvAmt: 0, fEnvAttack: 0.01, fEnvDecay: 0.3, keyTrack: 0,
+        lfoTarget: "pitch", lfo2Rate: 0.3, lfo2Depth: 0, glide: 0,
+        reverbSize: 35, reverbMix: 0, chorusRate: 0.8, chorusDepth: 30, chorusMix: 0, drive: 0
+      };
+      function P(o) {
+        var out = {}, k;
+        for (k in NEUTRAL) { out[k] = NEUTRAL[k]; }
+        for (k in o) { out[k] = o[k]; }
+        return out;
+      }
+
+      // The plain default patch — also what the Init button returns to.
+      var INIT = P({
+        wave: "triangle", detuneOn: true, detune: 6,
         attack: 0.02, decay: 0.3, sustain: 62, release: 0.45,
         cutoffHz: 3600, resonance: 1,
         lfoRate: 5, lfoDepth: 4,
         echoTime: 0.27, echoMix: 14,
-        volume: 70,
-        arpOn: false, arpPattern: "up", arpRate: 8
-      };
+        volume: 70
+      });
+
+      var state = {};
+      (function () { for (var k in INIT) { state[k] = INIT[k]; } })();
+      state.arpOn = false; state.arpPattern = "up"; state.arpRate = 8;
 
       var PRESETS = {
-        pad:   { wave: "triangle", detuneOn: true,  detune: 12, attack: 0.8,  decay: 1.0,  sustain: 70, release: 1.6,  cutoffHz: 1100,  resonance: 0.8, lfoRate: 0.4, lfoDepth: 3, echoTime: 0.38, echoMix: 24, volume: 72 },
-        lead:  { wave: "sawtooth", detuneOn: true,  detune: 5,  attack: 0.01, decay: 0.18, sustain: 80, release: 0.18, cutoffHz: 8500,  resonance: 5,   lfoRate: 5.5, lfoDepth: 7, echoTime: 0.21, echoMix: 18, volume: 66 },
-        bass:  { wave: "sine",     detuneOn: false, detune: 0,  attack: 0.005, decay: 0.22, sustain: 55, release: 0.12, cutoffHz: 420,   resonance: 2.5, lfoRate: 0,   lfoDepth: 0, echoTime: 0.2,  echoMix: 0,  volume: 78 },
-        organ: { wave: "square",   detuneOn: true,  detune: 3,  attack: 0.01, decay: 0.05, sustain: 100, release: 0.07, cutoffHz: 3800,  resonance: 0.6, lfoRate: 4.6, lfoDepth: 3, echoTime: 0.3,  echoMix: 16, volume: 62 },
-        chime: { wave: "sine",     detuneOn: true,  detune: 9,  attack: 0.002, decay: 1.4, sustain: 0,  release: 1.2,  cutoffHz: 12000, resonance: 1,   lfoRate: 0,   lfoDepth: 0, echoTime: 0.34, echoMix: 30, volume: 70 },
-        epiano:  { wave: "triangle", detuneOn: true,  detune: 10, attack: 0.004, decay: 1.1, sustain: 22, release: 0.7,  cutoffHz: 2600,  resonance: 0.8, lfoRate: 0,   lfoDepth: 0, echoTime: 0.24, echoMix: 12, volume: 72 },
-        strings: { wave: "sawtooth", detuneOn: true,  detune: 14, attack: 0.55,  decay: 0.6, sustain: 82, release: 1.3,  cutoffHz: 950,   resonance: 0.7, lfoRate: 4.8, lfoDepth: 5, echoTime: 0.32, echoMix: 18, volume: 70 },
-        choir:   { wave: "triangle", detuneOn: true,  detune: 8,  attack: 0.9,   decay: 0.8, sustain: 78, release: 1.9,  cutoffHz: 1350,  resonance: 0.5, lfoRate: 0.7, lfoDepth: 4, echoTime: 0.42, echoMix: 27, volume: 72 },
-        musicbox:    { wave: "sine",     detuneOn: true,  detune: 4,  attack: 0.004, decay: 1.2,  sustain: 0,  release: 1.1,  cutoffHz: 9500,  resonance: 0.7, lfoRate: 0,   lfoDepth: 0,  echoTime: 0.3,  echoMix: 24, volume: 68 },
-        harpsichord: { wave: "sawtooth", detuneOn: true,  detune: 3,  attack: 0.003, decay: 0.35, sustain: 15, release: 0.14, cutoffHz: 3200,  resonance: 2.5, lfoRate: 0,   lfoDepth: 0,  echoTime: 0.13, echoMix: 6,  volume: 64 },
-        bell:        { wave: "sine",     detuneOn: true,  detune: 6,  attack: 0.003, decay: 1.5,  sustain: 0,  release: 2.4,  cutoffHz: 5200,  resonance: 1,   lfoRate: 0,   lfoDepth: 0,  echoTime: 0.44, echoMix: 30, volume: 70 },
-        kalimba:     { wave: "triangle", detuneOn: false, detune: 0,  attack: 0.003, decay: 0.5,  sustain: 0,  release: 0.35, cutoffHz: 2100,  resonance: 1,   lfoRate: 0,   lfoDepth: 0,  echoTime: 0.21, echoMix: 12, volume: 72 },
-        shimmer:     { wave: "triangle", detuneOn: true,  detune: 15, attack: 1.0,   decay: 1.2,  sustain: 78, release: 2.2,  cutoffHz: 3400,  resonance: 0.6, lfoRate: 0.5, lfoDepth: 4,  echoTime: 0.42, echoMix: 36, volume: 70 },
-        ocean:       { wave: "sine",     detuneOn: true,  detune: 10, attack: 1.5,   decay: 1.4,  sustain: 85, release: 2.8,  cutoffHz: 620,   resonance: 0.5, lfoRate: 0.15, lfoDepth: 5, echoTime: 0.5,  echoMix: 22, volume: 74 },
-        nightsky:    { wave: "triangle", detuneOn: true,  detune: 7,  attack: 1.2,   decay: 1.0,  sustain: 72, release: 2.4,  cutoffHz: 480,   resonance: 0.4, lfoRate: 0.25, lfoDepth: 3, echoTime: 0.47, echoMix: 27, volume: 70 },
-        squarelead:  { wave: "square",   detuneOn: false, detune: 0,  attack: 0.006, decay: 0.14, sustain: 85, release: 0.13, cutoffHz: 6000,  resonance: 2,   lfoRate: 6,   lfoDepth: 7,  echoTime: 0.15, echoMix: 13, volume: 62 },
-        brass:       { wave: "sawtooth", detuneOn: true,  detune: 5,  attack: 0.06,  decay: 0.3,  sustain: 78, release: 0.24, cutoffHz: 2300,  resonance: 2.4, lfoRate: 4.2, lfoDepth: 4,  echoTime: 0.19, echoMix: 11, volume: 68 },
-        flute:       { wave: "sine",     detuneOn: false, detune: 0,  attack: 0.14,  decay: 0.32, sustain: 86, release: 0.42, cutoffHz: 1600,  resonance: 0.6, lfoRate: 5.4, lfoDepth: 12, echoTime: 0.28, echoMix: 16, volume: 70 },
-        subbass:     { wave: "sine",     detuneOn: false, detune: 0,  attack: 0.005, decay: 0.28, sustain: 72, release: 0.14, cutoffHz: 210,   resonance: 1.4, lfoRate: 0,   lfoDepth: 0,  echoTime: 0.2,  echoMix: 0,  volume: 84 },
-        funkbass:    { wave: "sawtooth", detuneOn: false, detune: 0,  attack: 0.004, decay: 0.16, sustain: 24, release: 0.09, cutoffHz: 880,   resonance: 9,   lfoRate: 0,   lfoDepth: 0,  echoTime: 0.1,  echoMix: 4,  volume: 76 },
-        upright:     { wave: "triangle", detuneOn: false, detune: 0,  attack: 0.004, decay: 0.65, sustain: 8,  release: 0.32, cutoffHz: 1050,  resonance: 1.1, lfoRate: 0,   lfoDepth: 0,  echoTime: 0.16, echoMix: 7,  volume: 76 },
-        marimba:     { wave: "sine",     detuneOn: true,  detune: 3,  attack: 0.003, decay: 0.38, sustain: 0,  release: 0.28, cutoffHz: 2900,  resonance: 0.8, lfoRate: 0,   lfoDepth: 0,  echoTime: 0.18, echoMix: 10, volume: 72 },
-        banjo:       { wave: "sawtooth", detuneOn: true,  detune: 8,  attack: 0.003, decay: 0.26, sustain: 5,  release: 0.15, cutoffHz: 4600,  resonance: 2.6, lfoRate: 0,   lfoDepth: 0,  echoTime: 0.12, echoMix: 6,  volume: 66 },
-        eightbit:    { wave: "square",   detuneOn: false, detune: 0,  attack: 0.004, decay: 0.1,  sustain: 90, release: 0.08, cutoffHz: 11500, resonance: 1,   lfoRate: 0,   lfoDepth: 0,  echoTime: 0.14, echoMix: 15, volume: 60 }
+        pad:   P({ wave: "triangle", wave2: "triangle", detuneOn: true,  detune: 12, attack: 0.8,  decay: 1.0,  sustain: 70, release: 1.6,  cutoffHz: 1100,  resonance: 0.8, lfoRate: 0.4, lfoDepth: 3, echoTime: 0.38, echoMix: 24, volume: 72 }),
+        lead:  P({ wave: "sawtooth", wave2: "sawtooth", detuneOn: true,  detune: 5,  attack: 0.01, decay: 0.18, sustain: 80, release: 0.18, cutoffHz: 8500,  resonance: 5,   lfoRate: 5.5, lfoDepth: 7, echoTime: 0.21, echoMix: 18, volume: 66 }),
+        bass:  P({ wave: "sine",     wave2: "sine",     detuneOn: false, detune: 0,  attack: 0.005, decay: 0.22, sustain: 55, release: 0.12, cutoffHz: 420,   resonance: 2.5, lfoRate: 0,   lfoDepth: 0, echoTime: 0.2,  echoMix: 0,  volume: 78 }),
+        organ: P({ wave: "square",   wave2: "square",   detuneOn: true,  detune: 3,  attack: 0.01, decay: 0.05, sustain: 100, release: 0.07, cutoffHz: 3800,  resonance: 0.6, lfoRate: 4.6, lfoDepth: 3, echoTime: 0.3,  echoMix: 16, volume: 62 }),
+        chime: P({ wave: "sine",     wave2: "sine",     detuneOn: true,  detune: 9,  attack: 0.002, decay: 1.4, sustain: 0,  release: 1.2,  cutoffHz: 12000, resonance: 1,   lfoRate: 0,   lfoDepth: 0, echoTime: 0.34, echoMix: 30, volume: 70 }),
+        epiano:  P({ wave: "triangle", wave2: "triangle", detuneOn: true,  detune: 10, attack: 0.004, decay: 1.1, sustain: 22, release: 0.7,  cutoffHz: 2600,  resonance: 0.8, lfoRate: 0,   lfoDepth: 0, echoTime: 0.24, echoMix: 12, volume: 72 }),
+        strings: P({ wave: "sawtooth", wave2: "sawtooth", detuneOn: true,  detune: 14, attack: 0.55,  decay: 0.6, sustain: 82, release: 1.3,  cutoffHz: 950,   resonance: 0.7, lfoRate: 4.8, lfoDepth: 5, echoTime: 0.32, echoMix: 18, volume: 70 }),
+        choir:   P({ wave: "triangle", wave2: "triangle", detuneOn: true,  detune: 8,  attack: 0.9,   decay: 0.8, sustain: 78, release: 1.9,  cutoffHz: 1350,  resonance: 0.5, lfoRate: 0.7, lfoDepth: 4, echoTime: 0.42, echoMix: 27, volume: 72 }),
+        musicbox:    P({ wave: "sine",     wave2: "sine",     detuneOn: true,  detune: 4,  attack: 0.004, decay: 1.2,  sustain: 0,  release: 1.1,  cutoffHz: 9500,  resonance: 0.7, lfoRate: 0,   lfoDepth: 0,  echoTime: 0.3,  echoMix: 24, volume: 68 }),
+        harpsichord: P({ wave: "sawtooth", wave2: "sawtooth", detuneOn: true,  detune: 3,  attack: 0.003, decay: 0.35, sustain: 15, release: 0.14, cutoffHz: 3200,  resonance: 2.5, lfoRate: 0,   lfoDepth: 0,  echoTime: 0.13, echoMix: 6,  volume: 64 }),
+        bell:        P({ wave: "sine",     wave2: "sine",     detuneOn: true,  detune: 6,  attack: 0.003, decay: 1.5,  sustain: 0,  release: 2.4,  cutoffHz: 5200,  resonance: 1,   lfoRate: 0,   lfoDepth: 0,  echoTime: 0.44, echoMix: 30, volume: 70 }),
+        kalimba:     P({ wave: "triangle", wave2: "triangle", detuneOn: false, detune: 0,  attack: 0.003, decay: 0.5,  sustain: 0,  release: 0.35, cutoffHz: 2100,  resonance: 1,   lfoRate: 0,   lfoDepth: 0,  echoTime: 0.21, echoMix: 12, volume: 72 }),
+        shimmer:     P({ wave: "triangle", wave2: "triangle", detuneOn: true,  detune: 15, attack: 1.0,   decay: 1.2,  sustain: 78, release: 2.2,  cutoffHz: 3400,  resonance: 0.6, lfoRate: 0.5, lfoDepth: 4,  echoTime: 0.42, echoMix: 36, volume: 70 }),
+        ocean:       P({ wave: "sine",     wave2: "sine",     detuneOn: true,  detune: 10, attack: 1.5,   decay: 1.4,  sustain: 85, release: 2.8,  cutoffHz: 620,   resonance: 0.5, lfoRate: 0.15, lfoDepth: 5, echoTime: 0.5,  echoMix: 22, volume: 74 }),
+        nightsky:    P({ wave: "triangle", wave2: "triangle", detuneOn: true,  detune: 7,  attack: 1.2,   decay: 1.0,  sustain: 72, release: 2.4,  cutoffHz: 480,   resonance: 0.4, lfoRate: 0.25, lfoDepth: 3, echoTime: 0.47, echoMix: 27, volume: 70 }),
+        squarelead:  P({ wave: "square",   wave2: "square",   detuneOn: false, detune: 0,  attack: 0.006, decay: 0.14, sustain: 85, release: 0.13, cutoffHz: 6000,  resonance: 2,   lfoRate: 6,   lfoDepth: 7,  echoTime: 0.15, echoMix: 13, volume: 62 }),
+        brass:       P({ wave: "sawtooth", wave2: "sawtooth", detuneOn: true,  detune: 5,  attack: 0.06,  decay: 0.3,  sustain: 78, release: 0.24, cutoffHz: 2300,  resonance: 2.4, lfoRate: 4.2, lfoDepth: 4,  echoTime: 0.19, echoMix: 11, volume: 68 }),
+        flute:       P({ wave: "sine",     wave2: "sine",     detuneOn: false, detune: 0,  attack: 0.14,  decay: 0.32, sustain: 86, release: 0.42, cutoffHz: 1600,  resonance: 0.6, lfoRate: 5.4, lfoDepth: 12, echoTime: 0.28, echoMix: 16, volume: 70 }),
+        subbass:     P({ wave: "sine",     wave2: "sine",     detuneOn: false, detune: 0,  attack: 0.005, decay: 0.28, sustain: 72, release: 0.14, cutoffHz: 210,   resonance: 1.4, lfoRate: 0,   lfoDepth: 0,  echoTime: 0.2,  echoMix: 0,  volume: 84 }),
+        funkbass:    P({ wave: "sawtooth", wave2: "sawtooth", detuneOn: false, detune: 0,  attack: 0.004, decay: 0.16, sustain: 24, release: 0.09, cutoffHz: 880,   resonance: 9,   lfoRate: 0,   lfoDepth: 0,  echoTime: 0.1,  echoMix: 4,  volume: 76 }),
+        upright:     P({ wave: "triangle", wave2: "triangle", detuneOn: false, detune: 0,  attack: 0.004, decay: 0.65, sustain: 8,  release: 0.32, cutoffHz: 1050,  resonance: 1.1, lfoRate: 0,   lfoDepth: 0,  echoTime: 0.16, echoMix: 7,  volume: 76 }),
+        marimba:     P({ wave: "sine",     wave2: "sine",     detuneOn: true,  detune: 3,  attack: 0.003, decay: 0.38, sustain: 0,  release: 0.28, cutoffHz: 2900,  resonance: 0.8, lfoRate: 0,   lfoDepth: 0,  echoTime: 0.18, echoMix: 10, volume: 72 }),
+        banjo:       P({ wave: "sawtooth", wave2: "sawtooth", detuneOn: true,  detune: 8,  attack: 0.003, decay: 0.26, sustain: 5,  release: 0.15, cutoffHz: 4600,  resonance: 2.6, lfoRate: 0,   lfoDepth: 0,  echoTime: 0.12, echoMix: 6,  volume: 66 }),
+        eightbit:    P({ wave: "square",   wave2: "square",   detuneOn: false, detune: 0,  attack: 0.004, decay: 0.1,  sustain: 90, release: 0.08, cutoffHz: 11500, resonance: 1,   lfoRate: 0,   lfoDepth: 0,  echoTime: 0.14, echoMix: 15, volume: 60 }),
+        /* ---- v4 showcase presets ---- */
+        cathedral: P({ wave: "triangle", wave2: "sine", detuneOn: true, detune: 10, oscMix: 45, attack: 1.1, decay: 1.0, sustain: 80, release: 2.6, cutoffHz: 2400, resonance: 0.6, keyTrack: 20, lfoRate: 0.5, lfoDepth: 4, lfo2Rate: 0.2, lfo2Depth: 25, echoTime: 0.42, echoMix: 20, reverbSize: 85, reverbMix: 45, chorusRate: 0.6, chorusDepth: 45, chorusMix: 30, volume: 72 }),
+        analogbrass: P({ wave: "sawtooth", wave2: "sawtooth", detuneOn: true, detune: 6, oscMix: 55, attack: 0.07, decay: 0.35, sustain: 75, release: 0.25, cutoffHz: 1400, resonance: 2.2, fEnvAmt: 55, fEnvAttack: 0.06, fEnvDecay: 0.4, keyTrack: 40, lfoRate: 4.4, lfoDepth: 4, echoTime: 0.19, echoMix: 10, volume: 68 }),
+        squelch: P({ wave: "sawtooth", wave2: "sawtooth", detuneOn: false, detune: 0, subLevel: 25, attack: 0.004, decay: 0.24, sustain: 18, release: 0.1, cutoffHz: 300, resonance: 12, fEnvAmt: 80, fEnvAttack: 0.004, fEnvDecay: 0.22, keyTrack: 60, lfoRate: 0, lfoDepth: 0, echoTime: 0.2, echoMix: 0, volume: 78 }),
+        lofi: P({ wave: "triangle", wave2: "sine", detuneOn: true, detune: 14, oscMix: 30, noiseLevel: 14, attack: 0.005, decay: 0.9, sustain: 25, release: 0.6, cutoffHz: 1200, resonance: 0.7, lfoRate: 0.6, lfoDepth: 9, echoTime: 0.26, echoMix: 14, reverbSize: 30, reverbMix: 12, drive: 38, volume: 70 }),
+        glass: P({ wave: "sine", wave2: "triangle", detuneOn: true, detune: 9, oscMix: 40, attack: 1.4, decay: 1.2, sustain: 75, release: 2.8, filterType: "bandpass", cutoffHz: 1800, resonance: 3.5, keyTrack: 50, lfoRate: 0.4, lfoDepth: 3, lfo2Rate: 0.15, lfo2Depth: 40, echoTime: 0.4, echoMix: 24, reverbSize: 70, reverbMix: 38, chorusDepth: 40, chorusMix: 25, volume: 70 }),
+        berlin: P({ wave: "square", wave2: "square", detuneOn: false, detune: 0, pulseWidth: 32, attack: 0.003, decay: 0.18, sustain: 8, release: 0.09, cutoffHz: 2600, resonance: 4, fEnvAmt: 45, fEnvAttack: 0.003, fEnvDecay: 0.16, keyTrack: 30, glide: 0.02, lfoRate: 0, lfoDepth: 0, echoTime: 0.19, echoMix: 22, volume: 70 }),
+        cosmic: P({ wave: "sawtooth", wave2: "sawtooth", detuneOn: true, detune: 12, oscMix: 50, attack: 1.6, decay: 1.4, sustain: 85, release: 3.0, cutoffHz: 900, resonance: 6, lfoRate: 0.3, lfoDepth: 3, lfo2Rate: 0.08, lfo2Depth: 85, echoTime: 0.5, echoMix: 20, reverbSize: 60, reverbMix: 30, volume: 70 }),
+        subrunner: P({ wave: "triangle", wave2: "triangle", detuneOn: false, detune: 0, subLevel: 70, attack: 0.005, decay: 0.3, sustain: 60, release: 0.14, cutoffHz: 500, resonance: 2, fEnvAmt: 30, fEnvAttack: 0.005, fEnvDecay: 0.25, keyTrack: 35, glide: 0.06, drive: 12, lfoRate: 0, lfoDepth: 0, echoTime: 0.2, echoMix: 0, volume: 82 })
       };
 
       /* ================= Audio graph ================= */
-      var ctx = null, filterNode, masterGain, delayNode, wetGain, lfoOsc, lfoGain;
+      var ctx = null;
+      var voiceBus, driveShaper, fxOut, masterGain;
+      var delayNode, wetGain, revSend, convolver, chorusWet, chorOsc, chorDepthGain, chorDepthInv;
+      var lfoOsc, lfoGain, lfo2Osc, lfo2Gain, noiseBuffer;
+      var bendCents = 0;       // pitch bend, -200..+200 cents
+      var glideFromFreq = null; // frequency of the most recent note (for glide)
 
       function ensureAudio() {
         if (ctx) {
@@ -621,69 +838,221 @@
         if (!AC) { return; }
         ctx = new AC();
 
-        filterNode = ctx.createBiquadFilter();
-        filterNode.type = "lowpass";
-        filterNode.frequency.value = state.cutoffHz;
-        filterNode.Q.value = state.resonance;
+        // Voices sum into voiceBus -> drive -> fxOut, which feeds the dry path
+        // and the echo / reverb / chorus sends in parallel -> master -> limiter.
+        voiceBus = ctx.createGain(); voiceBus.gain.value = 1;
+        driveShaper = ctx.createWaveShaper();
+        driveShaper.curve = makeDriveCurve(state.drive);
+        driveShaper.oversample = "2x";
+        fxOut = ctx.createGain(); fxOut.gain.value = 1;
+        voiceBus.connect(driveShaper); driveShaper.connect(fxOut);
 
         masterGain = ctx.createGain();
         masterGain.gain.value = volumeToGain(state.volume);
 
-        // Master limiter: transparent in normal play (a single voice peaks
-        // around -16 dB at 70% volume), it only catches pathological stacks.
-        // Ceiling math: per-voice peak 0.30 x (0.62 + 0.62) osc gains = 0.372;
-        // the 8-voice cap bounds the dry sum to 8 x 0.372 x 0.9 (max master)
-        // = 2.68 (+8.6 dB). A -3 dB threshold at 20:1 maps that to
-        // -3 + 11.6/20 = -2.4 dB (0.76) — under 0 dB, so it can never clip.
+        // Master limiter — the FINAL stage, after every effect. It is
+        // transparent in normal play and only catches pathological stacks.
+        // Worst-case level math, with reverb + chorus + echo ALL engaged:
+        //   per-voice peak: envelope 0.30 x source sum (osc mix <= 0.72 +
+        //   sub <= 0.38 + noise <= 0.30 = 1.40) = 0.42
+        //   8-voice hard cap -> summed voices <= 3.36 (+10.5 dBFS)
+        //   drive curve |(1+k)x / (1+k|x|)| < 1 for any input, so the
+        //   post-drive peak is <= ~1.0 no matter what feeds it
+        //   parallel wet gains: echo <= 0.60, reverb <= 0.60 (impulse is
+        //   energy-normalized), chorus <= 0.42 -> master input
+        //   <= 1.0 x (1 + 0.60 + 0.60 + 0.42) x master gain 0.9 = 2.36 (+7.5 dB)
+        //   limiter at -3 dB, 20:1 -> -3 + (7.5 + 3)/20 = -2.5 dBFS < 0 dB.
+        //   It cannot clip; in fact the 20:1 stage holds the output under
+        //   0 dBFS for any input up to +57 dBFS.
         var comp = ctx.createDynamicsCompressor();
         comp.threshold.value = -3;
         comp.knee.value = 0;
         comp.ratio.value = 20;
         comp.attack.value = 0.002;
         comp.release.value = 0.24;
-
-        var dry = ctx.createGain();
-        dry.gain.value = 1;
-
-        delayNode = ctx.createDelay(1.0);
-        delayNode.delayTime.value = state.echoTime;
-        var fb = ctx.createGain();
-        fb.gain.value = 0.34;
-        wetGain = ctx.createGain();
-        wetGain.gain.value = state.echoMix / 100;
-
-        filterNode.connect(dry);
-        dry.connect(masterGain);
-        filterNode.connect(delayNode);
-        delayNode.connect(fb);
-        fb.connect(delayNode);
-        delayNode.connect(wetGain);
-        wetGain.connect(masterGain);
-
         masterGain.connect(comp);
         comp.connect(ctx.destination);
 
-        lfoOsc = ctx.createOscillator();
-        lfoOsc.type = "sine";
+        var dry = ctx.createGain(); dry.gain.value = 1;
+        fxOut.connect(dry); dry.connect(masterGain);
+
+        // Echo (unchanged from earlier versions).
+        delayNode = ctx.createDelay(1.0);
+        delayNode.delayTime.value = state.echoTime;
+        var fb = ctx.createGain(); fb.gain.value = 0.34;
+        wetGain = ctx.createGain(); wetGain.gain.value = state.echoMix / 100;
+        fxOut.connect(delayNode);
+        delayNode.connect(fb); fb.connect(delayNode);
+        delayNode.connect(wetGain); wetGain.connect(masterGain);
+
+        // Reverb: convolver fed by a generated decaying-noise impulse
+        // (synthesized on the spot — no audio file, no sample).
+        revSend = ctx.createGain(); revSend.gain.value = state.reverbMix / 100;
+        convolver = ctx.createConvolver();
+        convolver.buffer = makeImpulse(state.reverbSize);
+        var revOut = ctx.createGain(); revOut.gain.value = 0.9;
+        fxOut.connect(revSend); revSend.connect(convolver);
+        convolver.connect(revOut); revOut.connect(masterGain);
+
+        // Chorus: two modulated delays panned apart for stereo width.
+        var chorIn = ctx.createGain(); chorIn.gain.value = 1;
+        fxOut.connect(chorIn);
+        var dL = ctx.createDelay(0.1); dL.delayTime.value = 0.017;
+        var dR = ctx.createDelay(0.1); dR.delayTime.value = 0.021;
+        var pL = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+        var pR = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+        if (pL) { pL.pan.value = -0.6; }
+        if (pR) { pR.pan.value = 0.6; }
+        chorusWet = ctx.createGain(); chorusWet.gain.value = (state.chorusMix / 100) * 0.7;
+        chorIn.connect(dL); chorIn.connect(dR);
+        if (pL && pR) { dL.connect(pL); pL.connect(chorusWet); dR.connect(pR); pR.connect(chorusWet); }
+        else { dL.connect(chorusWet); dR.connect(chorusWet); }
+        chorusWet.connect(masterGain);
+        chorOsc = ctx.createOscillator(); chorOsc.type = "sine";
+        chorOsc.frequency.value = state.chorusRate;
+        chorDepthGain = ctx.createGain();
+        chorDepthGain.gain.value = (state.chorusDepth / 100) * 0.0035;
+        chorDepthInv = ctx.createGain(); chorDepthInv.gain.value = -1;
+        chorOsc.connect(chorDepthGain);
+        chorDepthGain.connect(dL.delayTime);
+        chorDepthGain.connect(chorDepthInv); chorDepthInv.connect(dR.delayTime);
+        chorOsc.start();
+
+        // Shared white-noise buffer for per-voice noise sources.
+        var nLen = ctx.sampleRate * 2;
+        noiseBuffer = ctx.createBuffer(1, nLen, ctx.sampleRate);
+        var nd = noiseBuffer.getChannelData(0);
+        for (var i = 0; i < nLen; i++) { nd[i] = Math.random() * 2 - 1; }
+
+        // LFO 1 (target switchable: pitch / filter / amp) and LFO 2 (filter).
+        lfoOsc = ctx.createOscillator(); lfoOsc.type = "sine";
         lfoOsc.frequency.value = state.lfoRate;
-        lfoGain = ctx.createGain();
-        lfoGain.gain.value = state.lfoDepth;
-        lfoOsc.connect(lfoGain);
-        lfoOsc.start();
+        lfoGain = ctx.createGain(); lfoGain.gain.value = lfoDepthMapped();
+        lfoOsc.connect(lfoGain); lfoOsc.start();
+
+        lfo2Osc = ctx.createOscillator(); lfo2Osc.type = "sine";
+        lfo2Osc.frequency.value = state.lfo2Rate;
+        lfo2Gain = ctx.createGain(); lfo2Gain.gain.value = state.lfo2Depth * 9;
+        lfo2Osc.connect(lfo2Gain); lfo2Osc.start();
+
+        window.setInterval(pwmTick, 90);
       }
 
       function volumeToGain(v) { var x = v / 100; return x * x * 0.9; }
 
+      // LFO 1 depth means different units per target: cents for pitch,
+      // Hz of cutoff swing for filter, a gain fraction for amp (tremolo).
+      function lfoDepthMapped() {
+        if (state.lfoTarget === "filter") { return state.lfoDepth * 16; }
+        if (state.lfoTarget === "amp") { return state.lfoDepth * 0.008; }
+        return state.lfoDepth;
+      }
+
+      function makeDriveCurve(amount) {
+        var n = 257, curve = new Float32Array(n), k = amount, i, x;
+        for (i = 0; i < n; i++) {
+          x = (i / (n - 1)) * 2 - 1;
+          curve[i] = k <= 0 ? x : ((1 + k) * x) / (1 + k * Math.abs(x));
+        }
+        return curve;
+      }
+
+      // Generated impulse response: stereo noise burst with an exponential
+      // decay, energy-normalized so the wet level stays bounded (see the
+      // limiter math above). Size 0..100 -> about 0.4 s .. 3.6 s.
+      function makeImpulse(size) {
+        var dur = 0.4 + (size / 100) * 3.2;
+        var rate = ctx.sampleRate, len = Math.floor(rate * dur);
+        var buf = ctx.createBuffer(2, len, rate);
+        var energy = 0, ch, i, v;
+        for (ch = 0; ch < 2; ch++) {
+          var d = buf.getChannelData(ch);
+          for (i = 0; i < len; i++) {
+            v = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6);
+            d[i] = v; energy += v * v;
+          }
+        }
+        var scale = energy > 0 ? Math.sqrt(0.3 / energy) : 1;
+        for (ch = 0; ch < 2; ch++) {
+          var dd = buf.getChannelData(ch);
+          for (i = 0; i < len; i++) { dd[i] *= scale; }
+        }
+        return buf;
+      }
+
+      var impulseTimer = null;
+      function scheduleImpulseRebuild() {
+        if (!ctx) { return; }
+        if (impulseTimer !== null) { window.clearTimeout(impulseTimer); }
+        impulseTimer = window.setTimeout(function () {
+          impulseTimer = null;
+          if (convolver) { convolver.buffer = makeImpulse(state.reverbSize); }
+        }, 140);
+      }
+
+      /* Pulse wave: a PeriodicWave whose harmonic amplitudes follow
+         (2 / n*pi) * sin(n*pi*d) for duty cycle d — the true spectrum of a
+         pulse wave, so the Pulse Width slider reshapes the tone itself. */
+      var pulseCache = {};
+      function getPulseWave(widthPct) {
+        var key = Math.round(widthPct);
+        if (pulseCache[key]) { return pulseCache[key]; }
+        var d = key / 100, n = 64, real = new Float32Array(n + 1), imag = new Float32Array(n + 1), i;
+        for (i = 1; i <= n; i++) { real[i] = (2 / (Math.PI * i)) * Math.sin(Math.PI * i * d); }
+        var w = ctx.createPeriodicWave(real, imag);
+        pulseCache[key] = w;
+        return w;
+      }
+      function applyWave(osc, waveName, widthPct) {
+        try {
+          osc.type = waveName;
+          if (waveName === "square") { osc.setPeriodicWave(getPulseWave(widthPct)); }
+        } catch (e) {}
+      }
+      // Gentle PWM: while a pulse voice sounds and LFO 1 is on Pitch with
+      // some depth, the LFO slowly breathes the pulse width in and out.
+      function pwmTick() {
+        if (!ctx || state.lfoTarget !== "pitch" || state.lfoDepth <= 0) { return; }
+        var anyPulse = false;
+        active.forEach(function (v) { if (v.p1 || v.p2) { anyPulse = true; } });
+        if (!anyPulse) { return; }
+        var swing = Math.min(20, state.lfoDepth * 0.5);
+        var w = state.pulseWidth + Math.sin(2 * Math.PI * state.lfoRate * ctx.currentTime) * swing;
+        w = Math.max(5, Math.min(95, w));
+        var wave = getPulseWave(w);
+        active.forEach(function (v) {
+          try {
+            if (v.p1) { v.o1.setPeriodicWave(wave); }
+            if (v.p2 && v.o2) { v.o2.setPeriodicWave(wave); }
+          } catch (e) {}
+        });
+      }
+
       function applyLiveAudio() {
         if (!ctx) { return; }
         var t = ctx.currentTime;
-        filterNode.frequency.setTargetAtTime(state.cutoffHz, t, 0.03);
-        filterNode.Q.setTargetAtTime(state.resonance, t, 0.03);
         masterGain.gain.setTargetAtTime(volumeToGain(state.volume), t, 0.03);
         delayNode.delayTime.setTargetAtTime(state.echoTime, t, 0.03);
         wetGain.gain.setTargetAtTime(state.echoMix / 100, t, 0.03);
+        revSend.gain.setTargetAtTime(state.reverbMix / 100, t, 0.03);
+        chorusWet.gain.setTargetAtTime((state.chorusMix / 100) * 0.7, t, 0.03);
+        chorOsc.frequency.setTargetAtTime(state.chorusRate, t, 0.03);
+        chorDepthGain.gain.setTargetAtTime((state.chorusDepth / 100) * 0.0035, t, 0.03);
+        driveShaper.curve = makeDriveCurve(state.drive);
         lfoOsc.frequency.setTargetAtTime(state.lfoRate, t, 0.03);
-        lfoGain.gain.setTargetAtTime(state.lfoDepth, t, 0.03);
+        lfoGain.gain.setTargetAtTime(lfoDepthMapped(), t, 0.03);
+        lfo2Osc.frequency.setTargetAtTime(state.lfo2Rate, t, 0.03);
+        lfo2Gain.gain.setTargetAtTime(state.lfo2Depth * 9, t, 0.03);
+        // Live voices follow the shared filter controls.
+        active.forEach(function (v) {
+          try {
+            v.filter.type = state.filterType;
+            v.filter.Q.setTargetAtTime(state.resonance, t, 0.03);
+            var base = baseCutoffFor(v.midi);
+            v.baseCutoff = base;
+            v.filter.frequency.setTargetAtTime(base, t, 0.03);
+          } catch (e) {}
+        });
       }
 
       /* ================= Notes ================= */
@@ -695,14 +1064,52 @@
       var NOTE_NAMES = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"];
       function midiName(m) { return NOTE_NAMES[m % 12] + (Math.floor(m / 12) - 1); }
 
-      function cleanupVoice(v) {
+      // Per-voice base cutoff: the Cutoff slider, shifted by key tracking
+      // (100% = the cutoff follows the note's pitch exactly, relative to C4).
+      function baseCutoffFor(midi) {
+        var f = state.cutoffHz * Math.pow(2, ((midi - 60) / 12) * (state.keyTrack / 100));
+        return Math.max(30, Math.min(17000, f));
+      }
+      function oscGain1() { return 0.72 * (1 - state.oscMix / 100); }
+      function oscGain2() { return 0.72 * (state.oscMix / 100); }
+      function subGainVal() { return 0.38 * (state.subLevel / 100); }
+      function noiseGainVal() { return 0.30 * (state.noiseLevel / 100); }
+
+      function unwireLfo(v) {
+        if (!lfoGain) { return; }
+        try { lfoGain.disconnect(v.o1.detune); } catch (e) {}
+        if (v.o2) { try { lfoGain.disconnect(v.o2.detune); } catch (e) {} }
+        if (v.sub) { try { lfoGain.disconnect(v.sub.detune); } catch (e) {} }
+        try { lfoGain.disconnect(v.filter.frequency); } catch (e) {}
+        try { lfoGain.disconnect(v.trem.gain); } catch (e) {}
+      }
+      function wireLfo(v) {
+        if (!lfoGain) { return; }
+        unwireLfo(v);
         try {
-          if (lfoGain) {
-            try { lfoGain.disconnect(v.o1.detune); } catch (e) {}
-            if (v.o2) { try { lfoGain.disconnect(v.o2.detune); } catch (e) {} }
+          if (state.lfoTarget === "filter") { lfoGain.connect(v.filter.frequency); }
+          else if (state.lfoTarget === "amp") { lfoGain.connect(v.trem.gain); }
+          else {
+            lfoGain.connect(v.o1.detune);
+            if (v.o2) { lfoGain.connect(v.o2.detune); }
+            if (v.sub) { lfoGain.connect(v.sub.detune); }
           }
         } catch (e) {}
-        try { v.env.disconnect(); v.g1.disconnect(); if (v.g2) { v.g2.disconnect(); } } catch (e) {}
+      }
+
+      function cleanupVoice(v) {
+        unwireLfo(v);
+        if (lfo2Gain) { try { lfo2Gain.disconnect(v.filter.frequency); } catch (e) {} }
+        var nodes = [v.o1, v.o2, v.sub, v.noiseSrc, v.g1, v.g2, v.gSub, v.gNoise, v.filter, v.trem, v.env];
+        for (var i = 0; i < nodes.length; i++) {
+          if (nodes[i]) { try { nodes[i].disconnect(); } catch (e) {} }
+        }
+      }
+      function stopSources(v, when) {
+        try { v.o1.stop(when); } catch (e) {}
+        if (v.o2) { try { v.o2.stop(when); } catch (e) {} }
+        if (v.sub) { try { v.sub.stop(when); } catch (e) {} }
+        if (v.noiseSrc) { try { v.noiseSrc.stop(when); } catch (e) {} }
       }
 
       // Bring a voice to silence on a short ramp — never a hard cut mid-waveform.
@@ -715,8 +1122,7 @@
           v.env.gain.setValueAtTime(v.env.gain.value, t);
           v.env.gain.linearRampToValueAtTime(0, t + f);
         } catch (e) {}
-        try { v.o1.stop(t + f + 0.03); } catch (e) {}
-        if (v.o2) { try { v.o2.stop(t + f + 0.03); } catch (e) {} }
+        stopSources(v, t + f + 0.03);
         window.setTimeout(function () { cleanupVoice(v); }, (f + 0.12) * 1000);
       }
 
@@ -749,6 +1155,15 @@
         }
       }
 
+      function setOscFreq(osc, freq, t) {
+        if (glideFromFreq !== null && state.glide > 0.005 && Math.abs(glideFromFreq - freq) > 0.01) {
+          osc.frequency.setValueAtTime(glideFromFreq, t);
+          osc.frequency.exponentialRampToValueAtTime(Math.max(1, freq), t + state.glide);
+        } else {
+          osc.frequency.setValueAtTime(freq, t);
+        }
+      }
+
       function noteOn(midi) {
         ensureAudio();
         if (!ctx || active.has(midi)) { return; }
@@ -757,40 +1172,86 @@
           stealOldestVoice();
         }
         var t = ctx.currentTime;
+        var freq = midiFreq(midi);
         var peak = 0.30;
         // Click guard: even a 0 ms attack setting gets a 4 ms ramp, so a voice
         // never slams from 0 to full level inside a single waveform cycle.
         var atk = Math.max(0.004, state.attack);
 
+        // Per-voice filter, so the filter envelope and key tracking can
+        // follow each note on its own.
+        var filter = ctx.createBiquadFilter();
+        filter.type = state.filterType;
+        filter.Q.value = state.resonance;
+        var base = baseCutoffFor(midi);
+        filter.frequency.setValueAtTime(base, t);
+        if (state.fEnvAmt > 0) {
+          var fPeak = Math.min(17500, base * Math.pow(2, (state.fEnvAmt / 100) * 4));
+          var fAtk = Math.max(0.002, state.fEnvAttack);
+          filter.frequency.linearRampToValueAtTime(fPeak, t + fAtk);
+          filter.frequency.setTargetAtTime(base, t + fAtk, Math.max(0.02, state.fEnvDecay / 3));
+        }
+
+        var trem = ctx.createGain(); trem.gain.value = 1;
         var env = ctx.createGain();
         env.gain.setValueAtTime(0, t);
         env.gain.linearRampToValueAtTime(peak, t + atk);
         env.gain.linearRampToValueAtTime(peak * (state.sustain / 100), t + atk + state.decay);
-        env.connect(filterNode);
+        filter.connect(trem); trem.connect(env); env.connect(voiceBus);
 
-        var g1 = ctx.createGain(); g1.gain.value = 0.62;
+        var g1 = ctx.createGain(); g1.gain.value = oscGain1();
         var o1 = ctx.createOscillator();
-        o1.type = state.wave;
-        o1.frequency.value = midiFreq(midi);
-        o1.connect(g1); g1.connect(env);
+        applyWave(o1, state.wave, state.pulseWidth);
+        setOscFreq(o1, freq, t);
+        o1.detune.value = bendCents;
+        o1.connect(g1); g1.connect(filter);
 
         var o2 = null, g2 = null;
         if (state.detuneOn) {
-          g2 = ctx.createGain(); g2.gain.value = 0.62;
+          g2 = ctx.createGain(); g2.gain.value = oscGain2();
           o2 = ctx.createOscillator();
-          o2.type = state.wave;
-          o2.frequency.value = midiFreq(midi);
-          o2.detune.value = state.detune;
-          o2.connect(g2); g2.connect(env);
+          applyWave(o2, state.wave2, state.pulseWidth);
+          setOscFreq(o2, freq, t);
+          o2.detune.value = state.detune + bendCents;
+          o2.connect(g2); g2.connect(filter);
         }
 
-        // Vibrato: shared LFO -> each oscillator's detune (cents).
-        try { lfoGain.connect(o1.detune); if (o2) { lfoGain.connect(o2.detune); } } catch (e) {}
+        // Sub-oscillator: a sine one octave below Osc 1.
+        var sub = null, gSub = null;
+        if (state.subLevel > 0) {
+          gSub = ctx.createGain(); gSub.gain.value = subGainVal();
+          sub = ctx.createOscillator(); sub.type = "sine";
+          setOscFreq(sub, freq / 2, t);
+          sub.detune.value = bendCents;
+          sub.connect(gSub); gSub.connect(filter);
+        }
+
+        // Noise: a looped slice of the shared noise buffer, enveloped and
+        // filtered along with the rest of the voice.
+        var noiseSrc = null, gNoise = null;
+        if (state.noiseLevel > 0) {
+          gNoise = ctx.createGain(); gNoise.gain.value = noiseGainVal();
+          noiseSrc = ctx.createBufferSource();
+          noiseSrc.buffer = noiseBuffer; noiseSrc.loop = true;
+          noiseSrc.connect(gNoise); gNoise.connect(filter);
+        }
+
+        var voice = {
+          midi: midi, o1: o1, o2: o2, sub: sub, noiseSrc: noiseSrc,
+          g1: g1, g2: g2, gSub: gSub, gNoise: gNoise,
+          filter: filter, trem: trem, env: env, baseCutoff: base,
+          p1: state.wave === "square", p2: state.detuneOn && state.wave2 === "square"
+        };
+        wireLfo(voice);
+        try { lfo2Gain.connect(filter.frequency); } catch (e) {}
 
         o1.start(t);
         if (o2) { o2.start(t); }
+        if (sub) { sub.start(t); }
+        if (noiseSrc) { noiseSrc.start(t); }
 
-        active.set(midi, { o1: o1, o2: o2, env: env, g1: g1, g2: g2 });
+        glideFromFreq = freq;
+        active.set(midi, voice);
         updateNowPlaying();
       }
 
@@ -810,8 +1271,7 @@
           v.env.gain.setValueAtTime(v.env.gain.value, t);
           v.env.gain.linearRampToValueAtTime(0, t + r);
         } catch (e) {}
-        try { v.o1.stop(t + r + 0.05); } catch (e) {}
-        if (v.o2) { try { v.o2.stop(t + r + 0.05); } catch (e) {} }
+        stopSources(v, t + r + 0.05);
         window.setTimeout(function () {
           var i = releasingVoices.indexOf(entry);
           if (i !== -1) { releasingVoices.splice(i, 1); }
@@ -1098,6 +1558,78 @@
       });
       window.addEventListener("blur", function () { allNotesOff(); heldCodes.clear(); pointers.clear(); });
 
+      /* ================= Pitch bend ================= */
+      var bendStrip = document.getElementById("bendStrip");
+      var bendThumb = document.getElementById("bendThumb");
+      var bendPointer = null, bendSpring = null;
+
+      function renderBend() {
+        var pct = 50 - (bendCents / 200) * 44;
+        bendThumb.style.top = pct + "%";
+        bendStrip.setAttribute("aria-valuenow", (Math.round(bendCents) / 100).toString());
+      }
+      function applyBendToVoices() {
+        if (!ctx) { return; }
+        var t = ctx.currentTime;
+        active.forEach(function (v) {
+          try {
+            v.o1.detune.setTargetAtTime(bendCents, t, 0.012);
+            if (v.o2) { v.o2.detune.setTargetAtTime(state.detune + bendCents, t, 0.012); }
+            if (v.sub) { v.sub.detune.setTargetAtTime(bendCents, t, 0.012); }
+          } catch (e) {}
+        });
+      }
+      function setBend(semi) {
+        bendCents = Math.max(-200, Math.min(200, Math.round(semi * 100)));
+        renderBend();
+        applyBendToVoices();
+      }
+      function springBendBack() {
+        if (bendSpring !== null) { window.cancelAnimationFrame(bendSpring); bendSpring = null; }
+        if (bendCents === 0) { renderBend(); return; }
+        var start = bendCents, t0 = null;
+        var step = function (now) {
+          if (t0 === null) { t0 = now; }
+          var p = Math.min(1, (now - t0) / 170);
+          var e = 1 - (1 - p) * (1 - p);
+          bendCents = Math.round(start * (1 - e));
+          renderBend();
+          applyBendToVoices();
+          if (p < 1) { bendSpring = window.requestAnimationFrame(step); }
+          else { bendSpring = null; bendCents = 0; renderBend(); applyBendToVoices(); }
+        };
+        bendSpring = window.requestAnimationFrame(step);
+      }
+      function bendFromEvent(e) {
+        var r = bendStrip.getBoundingClientRect();
+        if (!r.height) { return; }
+        var ratio = (e.clientY - r.top) / r.height;
+        setBend((0.5 - ratio) * 4); // top = +2 semitones, bottom = -2
+      }
+      bendStrip.addEventListener("pointerdown", function (e) {
+        e.preventDefault();
+        ensureAudio();
+        if (bendSpring !== null) { window.cancelAnimationFrame(bendSpring); bendSpring = null; }
+        bendPointer = e.pointerId;
+        try { bendStrip.setPointerCapture(e.pointerId); } catch (err) {}
+        bendFromEvent(e);
+      });
+      bendStrip.addEventListener("pointermove", function (e) {
+        if (bendPointer === e.pointerId) { bendFromEvent(e); }
+      });
+      function bendEnd(e) {
+        if (bendPointer === e.pointerId) { bendPointer = null; springBendBack(); }
+      }
+      bendStrip.addEventListener("pointerup", bendEnd);
+      bendStrip.addEventListener("pointercancel", bendEnd);
+      bendStrip.addEventListener("keydown", function (e) {
+        if (e.key === "ArrowUp") { e.preventDefault(); ensureAudio(); setBend(1); }
+        else if (e.key === "ArrowDown") { e.preventDefault(); ensureAudio(); setBend(-1); }
+      });
+      bendStrip.addEventListener("keyup", function (e) {
+        if (e.key === "ArrowUp" || e.key === "ArrowDown") { springBendBack(); }
+      });
+
       /* ================= Controls ================= */
       function $(id) { return document.getElementById(id); }
       function fmtSec(v) { return (Math.round(v * 100) / 100).toFixed(2).replace(/0$/, "") + " s"; }
@@ -1113,56 +1645,105 @@
       }
 
       var els = {
-        detune: $("detune"), attack: $("attack"), decay: $("decay"), sustain: $("sustain"),
-        release: $("release"), cutoff: $("cutoff"), resonance: $("resonance"),
+        oscMix: $("oscMix"), detune: $("detune"), subLevel: $("subLevel"),
+        pulseWidth: $("pulseWidth"), noiseLevel: $("noiseLevel"),
+        attack: $("attack"), decay: $("decay"), sustain: $("sustain"), release: $("release"),
+        cutoff: $("cutoff"), resonance: $("resonance"), keyTrack: $("keyTrack"),
+        fEnvAmt: $("fEnvAmt"), fEnvAttack: $("fEnvAttack"), fEnvDecay: $("fEnvDecay"),
         lfoRate: $("lfoRate"), lfoDepth: $("lfoDepth"),
-        echoTime: $("echoTime"), echoMix: $("echoMix"), volume: $("volume"),
+        lfo2Rate: $("lfo2Rate"), lfo2Depth: $("lfo2Depth"), glide: $("glide"),
+        echoTime: $("echoTime"), echoMix: $("echoMix"),
+        reverbSize: $("reverbSize"), reverbMix: $("reverbMix"),
+        chorusRate: $("chorusRate"), chorusDepth: $("chorusDepth"), chorusMix: $("chorusMix"),
+        drive: $("drive"), volume: $("volume"),
         detuneToggle: $("detuneToggle"),
-        arpRate: $("arpRate"), arpToggle: $("arpToggle")
+        arpRate: $("arpRate"), arpToggle: $("arpToggle"),
+        presetSelect: $("presetSelect")
       };
 
       function refreshLabels() {
+        $("oscMixVal").textContent = "Osc 2 " + state.oscMix + "%";
         $("detuneVal").textContent = (state.detune > 0 ? "+" : "") + state.detune + " cents";
+        $("subLevelVal").textContent = state.subLevel === 0 ? "off" : state.subLevel + "%";
+        $("pulseWidthVal").textContent = state.pulseWidth + "%";
+        $("noiseLevelVal").textContent = state.noiseLevel === 0 ? "off" : state.noiseLevel + "%";
         $("attackVal").textContent = fmtSec(state.attack);
         $("decayVal").textContent = fmtSec(state.decay);
         $("sustainVal").textContent = state.sustain + "%";
         $("releaseVal").textContent = fmtSec(state.release);
         $("cutoffVal").textContent = fmtHz(state.cutoffHz);
         $("resonanceVal").textContent = (Math.round(state.resonance * 10) / 10).toString();
+        $("keyTrackVal").textContent = state.keyTrack + "%";
+        $("fEnvAmtVal").textContent = state.fEnvAmt === 0 ? "off" : state.fEnvAmt + "%";
+        $("fEnvAttackVal").textContent = fmtSec(state.fEnvAttack);
+        $("fEnvDecayVal").textContent = fmtSec(state.fEnvDecay);
         $("lfoRateVal").textContent = (Math.round(state.lfoRate * 10) / 10) + " Hz";
-        $("lfoDepthVal").textContent = state.lfoDepth === 0 ? "off" : state.lfoDepth + " cents";
+        if (state.lfoDepth === 0) { $("lfoDepthVal").textContent = "off"; }
+        else if (state.lfoTarget === "filter") { $("lfoDepthVal").textContent = (state.lfoDepth * 16) + " Hz"; }
+        else if (state.lfoTarget === "amp") { $("lfoDepthVal").textContent = Math.round(state.lfoDepth * 0.8) + "%"; }
+        else { $("lfoDepthVal").textContent = state.lfoDepth + " cents"; }
+        $("lfo2RateVal").textContent = (Math.round(state.lfo2Rate * 100) / 100) + " Hz";
+        $("lfo2DepthVal").textContent = state.lfo2Depth === 0 ? "off" : state.lfo2Depth + "%";
+        $("glideVal").textContent = state.glide <= 0.005 ? "off" : fmtSec(state.glide);
         $("echoTimeVal").textContent = fmtSec(state.echoTime);
         $("echoMixVal").textContent = state.echoMix === 0 ? "off" : state.echoMix + "%";
+        $("reverbSizeVal").textContent = state.reverbSize + "%";
+        $("reverbMixVal").textContent = state.reverbMix === 0 ? "off" : state.reverbMix + "%";
+        $("chorusRateVal").textContent = (Math.round(state.chorusRate * 100) / 100) + " Hz";
+        $("chorusDepthVal").textContent = state.chorusDepth + "%";
+        $("chorusMixVal").textContent = state.chorusMix === 0 ? "off" : state.chorusMix + "%";
+        $("driveVal").textContent = state.drive === 0 ? "off" : state.drive + "%";
         $("volumeVal").textContent = state.volume + "%";
         $("arpRateVal").textContent = state.arpRate + " notes/s";
       }
 
       function refreshControlUI() {
+        els.oscMix.value = state.oscMix;
         els.detune.value = state.detune;
+        els.subLevel.value = state.subLevel;
+        els.pulseWidth.value = state.pulseWidth;
+        els.noiseLevel.value = state.noiseLevel;
         els.attack.value = state.attack;
         els.decay.value = state.decay;
         els.sustain.value = state.sustain;
         els.release.value = state.release;
         els.cutoff.value = cutoffToSlider(state.cutoffHz);
         els.resonance.value = state.resonance;
+        els.keyTrack.value = state.keyTrack;
+        els.fEnvAmt.value = state.fEnvAmt;
+        els.fEnvAttack.value = state.fEnvAttack;
+        els.fEnvDecay.value = state.fEnvDecay;
         els.lfoRate.value = state.lfoRate;
         els.lfoDepth.value = state.lfoDepth;
+        els.lfo2Rate.value = state.lfo2Rate;
+        els.lfo2Depth.value = state.lfo2Depth;
+        els.glide.value = state.glide;
         els.echoTime.value = state.echoTime;
         els.echoMix.value = state.echoMix;
+        els.reverbSize.value = state.reverbSize;
+        els.reverbMix.value = state.reverbMix;
+        els.chorusRate.value = state.chorusRate;
+        els.chorusDepth.value = state.chorusDepth;
+        els.chorusMix.value = state.chorusMix;
+        els.drive.value = state.drive;
         els.volume.value = state.volume;
         els.detuneToggle.setAttribute("aria-checked", state.detuneOn ? "true" : "false");
         els.arpRate.value = state.arpRate;
         els.arpToggle.setAttribute("aria-checked", state.arpOn ? "true" : "false");
-        var waveBtns = document.querySelectorAll("#waveRow .wave-btn");
-        waveBtns.forEach(function (b) { b.classList.toggle("active", b.dataset.wave === state.wave); });
+        document.querySelectorAll("#waveRow .wave-btn").forEach(function (b) { b.classList.toggle("active", b.dataset.wave === state.wave); });
+        document.querySelectorAll("#wave2Row .wave-btn").forEach(function (b) { b.classList.toggle("active", b.dataset.wave2 === state.wave2); });
+        document.querySelectorAll("#filterTypeRow .wave-btn").forEach(function (b) { b.classList.toggle("active", b.dataset.ftype === state.filterType); });
+        document.querySelectorAll("#lfoTargetRow .wave-btn").forEach(function (b) { b.classList.toggle("active", b.dataset.ltarget === state.lfoTarget); });
         document.querySelectorAll("#arpPatternRow .wave-btn").forEach(function (b) {
           b.classList.toggle("active", b.dataset.arpPattern === state.arpPattern);
         });
         refreshLabels();
       }
 
-      function clearPresetHighlight() {
-        document.querySelectorAll("#presets .preset-btn").forEach(function (b) { b.classList.remove("active"); });
+      // Any hand adjustment after choosing a preset makes the patch custom —
+      // the list says so honestly instead of keeping the preset's name.
+      function markCustom() {
+        if (els.presetSelect.value !== "custom") { els.presetSelect.value = "custom"; }
       }
 
       function bindSlider(el, key, parse, after) {
@@ -1172,15 +1753,39 @@
           if (after) { after(); }
           refreshLabels();
           applyLiveAudio();
-          clearPresetHighlight();
+          markCustom();
         });
         el.addEventListener("pointerdown", ensureAudio);
       }
       var F = function (v) { return parseFloat(v); };
       var I = function (v) { return parseInt(v, 10); };
 
+      bindSlider(els.oscMix, "oscMix", I, function () {
+        active.forEach(function (v) {
+          try {
+            v.g1.gain.setTargetAtTime(oscGain1(), ctx.currentTime, 0.02);
+            if (v.g2) { v.g2.gain.setTargetAtTime(oscGain2(), ctx.currentTime, 0.02); }
+          } catch (e) {}
+        });
+      });
       bindSlider(els.detune, "detune", I, function () {
-        active.forEach(function (v) { if (v.o2) { try { v.o2.detune.setTargetAtTime(state.detune, ctx.currentTime, 0.02); } catch (e) {} } });
+        active.forEach(function (v) { if (v.o2) { try { v.o2.detune.setTargetAtTime(state.detune + bendCents, ctx.currentTime, 0.02); } catch (e) {} } });
+      });
+      bindSlider(els.subLevel, "subLevel", I, function () {
+        active.forEach(function (v) { if (v.gSub) { try { v.gSub.gain.setTargetAtTime(subGainVal(), ctx.currentTime, 0.02); } catch (e) {} } });
+      });
+      bindSlider(els.pulseWidth, "pulseWidth", I, function () {
+        if (!ctx) { return; }
+        var wave = getPulseWave(state.pulseWidth);
+        active.forEach(function (v) {
+          try {
+            if (v.p1) { v.o1.setPeriodicWave(wave); }
+            if (v.p2 && v.o2) { v.o2.setPeriodicWave(wave); }
+          } catch (e) {}
+        });
+      });
+      bindSlider(els.noiseLevel, "noiseLevel", I, function () {
+        active.forEach(function (v) { if (v.gNoise) { try { v.gNoise.gain.setTargetAtTime(noiseGainVal(), ctx.currentTime, 0.02); } catch (e) {} } });
       });
       bindSlider(els.attack, "attack", F);
       bindSlider(els.decay, "decay", F);
@@ -1188,10 +1793,23 @@
       bindSlider(els.release, "release", F);
       bindSlider(els.cutoff, "cutoffHz", function () { return sliderToCutoff(parseFloat(els.cutoff.value)); });
       bindSlider(els.resonance, "resonance", F);
+      bindSlider(els.keyTrack, "keyTrack", I);
+      bindSlider(els.fEnvAmt, "fEnvAmt", I);
+      bindSlider(els.fEnvAttack, "fEnvAttack", F);
+      bindSlider(els.fEnvDecay, "fEnvDecay", F);
       bindSlider(els.lfoRate, "lfoRate", F);
       bindSlider(els.lfoDepth, "lfoDepth", I);
+      bindSlider(els.lfo2Rate, "lfo2Rate", F);
+      bindSlider(els.lfo2Depth, "lfo2Depth", I);
+      bindSlider(els.glide, "glide", F);
       bindSlider(els.echoTime, "echoTime", F);
       bindSlider(els.echoMix, "echoMix", I);
+      bindSlider(els.reverbSize, "reverbSize", I, scheduleImpulseRebuild);
+      bindSlider(els.reverbMix, "reverbMix", I);
+      bindSlider(els.chorusRate, "chorusRate", F);
+      bindSlider(els.chorusDepth, "chorusDepth", F);
+      bindSlider(els.chorusMix, "chorusMix", I);
+      bindSlider(els.drive, "drive", I);
       bindSlider(els.volume, "volume", I);
 
       document.querySelectorAll("#waveRow .wave-btn").forEach(function (b) {
@@ -1199,10 +1817,42 @@
           ensureAudio();
           state.wave = b.dataset.wave;
           active.forEach(function (v) {
-            try { v.o1.type = state.wave; if (v.o2) { v.o2.type = state.wave; } } catch (e) {}
+            applyWave(v.o1, state.wave, state.pulseWidth);
+            v.p1 = state.wave === "square";
           });
           refreshControlUI();
-          clearPresetHighlight();
+          markCustom();
+        });
+      });
+      document.querySelectorAll("#wave2Row .wave-btn").forEach(function (b) {
+        b.addEventListener("click", function () {
+          ensureAudio();
+          state.wave2 = b.dataset.wave2;
+          active.forEach(function (v) {
+            if (v.o2) { applyWave(v.o2, state.wave2, state.pulseWidth); }
+            v.p2 = state.detuneOn && state.wave2 === "square";
+          });
+          refreshControlUI();
+          markCustom();
+        });
+      });
+      document.querySelectorAll("#filterTypeRow .wave-btn").forEach(function (b) {
+        b.addEventListener("click", function () {
+          ensureAudio();
+          state.filterType = b.dataset.ftype;
+          refreshControlUI();
+          applyLiveAudio();
+          markCustom();
+        });
+      });
+      document.querySelectorAll("#lfoTargetRow .wave-btn").forEach(function (b) {
+        b.addEventListener("click", function () {
+          ensureAudio();
+          state.lfoTarget = b.dataset.ltarget;
+          active.forEach(function (v) { wireLfo(v); });
+          refreshControlUI();
+          applyLiveAudio();
+          markCustom();
         });
       });
 
@@ -1210,7 +1860,7 @@
         ensureAudio();
         state.detuneOn = !state.detuneOn;
         els.detuneToggle.setAttribute("aria-checked", state.detuneOn ? "true" : "false");
-        clearPresetHighlight();
+        markCustom();
       });
 
       els.arpToggle.addEventListener("click", function () {
@@ -1235,17 +1885,80 @@
       });
       els.arpRate.addEventListener("pointerdown", ensureAudio);
 
-      document.querySelectorAll("#presets .preset-btn").forEach(function (b) {
-        b.addEventListener("click", function () {
-          ensureAudio();
-          var p = PRESETS[b.dataset.preset];
-          if (!p) { return; }
-          for (var k in p) { state[k] = p[k]; }
-          refreshControlUI();
-          applyLiveAudio();
-          clearPresetHighlight();
-          b.classList.add("active");
+      /* ================= Presets, dice, init ================= */
+      function applyPatch(patch) {
+        for (var k in patch) { state[k] = patch[k]; }
+        refreshControlUI();
+        applyLiveAudio();
+        if (ctx) { scheduleImpulseRebuild(); }
+      }
+
+      els.presetSelect.addEventListener("change", function () {
+        var key = els.presetSelect.value;
+        if (key === "custom") { return; }
+        var p = PRESETS[key];
+        if (!p) { return; }
+        ensureAudio();
+        applyPatch(p);
+      });
+
+      function rnd(lo, hi) { return lo + Math.random() * (hi - lo); }
+      function rndi(lo, hi) { return Math.round(rnd(lo, hi)); }
+      function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+      function logRnd(lo, hi) { return Math.exp(rnd(Math.log(lo), Math.log(hi))); }
+
+      // Randomize the full control surface, inside bounded musical ranges.
+      // Volume is left where the player set it — a surprise shouldn't shout.
+      function randomPatch() {
+        var target = Math.random() < 0.5 ? "pitch" : pick(["pitch", "filter", "amp"]);
+        var p = P({
+          wave: pick(["sine", "triangle", "square", "sawtooth"]),
+          wave2: pick(["sine", "triangle", "square", "sawtooth"]),
+          detuneOn: Math.random() < 0.7,
+          detune: rndi(-20, 20),
+          oscMix: rndi(20, 80),
+          subLevel: Math.random() < 0.3 ? 0 : rndi(0, 40),
+          pulseWidth: rndi(15, 85),
+          noiseLevel: Math.random() < 0.5 ? 0 : rndi(0, 18),
+          attack: Math.round(logRnd(0.003, 0.9) * 1000) / 1000,
+          decay: Math.round(rnd(0.1, 1.2) * 100) / 100,
+          sustain: rndi(10, 90),
+          release: Math.round(rnd(0.08, 1.8) * 100) / 100,
+          filterType: Math.random() < 0.7 ? "lowpass" : pick(["bandpass", "highpass"]),
+          cutoffHz: Math.round(logRnd(250, 8000)),
+          resonance: Math.round(rnd(0.5, 10) * 10) / 10,
+          fEnvAmt: Math.random() < 0.4 ? 0 : rndi(10, 70),
+          fEnvAttack: Math.round(rnd(0.003, 0.2) * 1000) / 1000,
+          fEnvDecay: Math.round(rnd(0.08, 0.8) * 100) / 100,
+          keyTrack: rndi(0, 70),
+          lfoTarget: target,
+          lfoRate: Math.round(rnd(0, 7) * 10) / 10,
+          lfoDepth: target === "filter" ? rndi(0, 30) : rndi(0, 14),
+          lfo2Rate: Math.round(rnd(0.05, 0.8) * 100) / 100,
+          lfo2Depth: Math.random() < 0.5 ? 0 : rndi(0, 45),
+          glide: Math.random() < 0.6 ? 0 : Math.round(rnd(0.01, 0.12) * 1000) / 1000,
+          echoTime: Math.round(rnd(0.05, 0.5) * 100) / 100,
+          echoMix: rndi(0, 30),
+          reverbSize: rndi(15, 90),
+          reverbMix: Math.random() < 0.35 ? 0 : rndi(0, 40),
+          chorusRate: Math.round(rnd(0.2, 2.5) * 100) / 100,
+          chorusDepth: rndi(10, 60),
+          chorusMix: Math.random() < 0.4 ? 0 : rndi(0, 32),
+          drive: Math.random() < 0.5 ? 0 : rndi(0, 35)
         });
+        p.volume = state.volume;
+        return p;
+      }
+
+      $("diceBtn").addEventListener("click", function () {
+        ensureAudio();
+        applyPatch(randomPatch());
+        markCustom();
+      });
+      $("initBtn").addEventListener("click", function () {
+        ensureAudio();
+        applyPatch(INIT);
+        markCustom();
       });
 
       /* Start audio on the first touch of any control, per autoplay rules. */
@@ -1253,6 +1966,7 @@
 
       buildKeyboard();
       refreshControlUI();
+      renderBend();
     </script>
     <script data-goatcounter="https://jesuslovestyler.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
   </body>
