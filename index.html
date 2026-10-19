@@ -107,6 +107,16 @@
         letter-spacing: 0.01em;
       }
       /* ---------- Presets ---------- */
+      .preset-family { margin-top: 14px; }
+      .preset-family:first-child { margin-top: 0; }
+      .preset-family h3 {
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        margin: 0 0 8px;
+      }
       .presets { display: flex; flex-wrap: wrap; gap: 8px; }
       .preset-btn {
         flex: 1 1 30%;
@@ -176,6 +186,7 @@
         touch-action: none;
         user-select: none;
         -webkit-user-select: none;
+        -webkit-touch-callout: none;
         background: #8a6f4d;
       }
       .key { position: relative; cursor: pointer; touch-action: none; }
@@ -375,15 +386,56 @@
 
       <section class="card" aria-label="Presets">
         <h2>Presets</h2>
-        <div class="presets" id="presets">
-          <button type="button" class="preset-btn" data-preset="pad">Soft Pad</button>
-          <button type="button" class="preset-btn" data-preset="lead">Bright Lead</button>
-          <button type="button" class="preset-btn" data-preset="bass">Deep Bass</button>
-          <button type="button" class="preset-btn" data-preset="organ">Church Organ</button>
-          <button type="button" class="preset-btn" data-preset="chime">Chime</button>
-          <button type="button" class="preset-btn" data-preset="epiano">Electric Piano</button>
-          <button type="button" class="preset-btn" data-preset="strings">Warm Strings</button>
-          <button type="button" class="preset-btn" data-preset="choir">Soft Choir</button>
+        <div id="presets">
+          <div class="preset-family">
+            <h3>Keys &amp; Bells</h3>
+            <div class="presets">
+              <button type="button" class="preset-btn" data-preset="epiano">Electric Piano</button>
+              <button type="button" class="preset-btn" data-preset="organ">Church Organ</button>
+              <button type="button" class="preset-btn" data-preset="chime">Chime</button>
+              <button type="button" class="preset-btn" data-preset="musicbox">Music Box</button>
+              <button type="button" class="preset-btn" data-preset="harpsichord">Harpsichord</button>
+              <button type="button" class="preset-btn" data-preset="bell">Cathedral Bell</button>
+              <button type="button" class="preset-btn" data-preset="kalimba">Kalimba</button>
+            </div>
+          </div>
+          <div class="preset-family">
+            <h3>Pads</h3>
+            <div class="presets">
+              <button type="button" class="preset-btn" data-preset="pad">Soft Pad</button>
+              <button type="button" class="preset-btn" data-preset="strings">Warm Strings</button>
+              <button type="button" class="preset-btn" data-preset="choir">Soft Choir</button>
+              <button type="button" class="preset-btn" data-preset="shimmer">Shimmer Pad</button>
+              <button type="button" class="preset-btn" data-preset="ocean">Ocean Pad</button>
+              <button type="button" class="preset-btn" data-preset="nightsky">Night Sky</button>
+            </div>
+          </div>
+          <div class="preset-family">
+            <h3>Leads</h3>
+            <div class="presets">
+              <button type="button" class="preset-btn" data-preset="lead">Bright Lead</button>
+              <button type="button" class="preset-btn" data-preset="squarelead">Square Lead</button>
+              <button type="button" class="preset-btn" data-preset="brass">Saw Brass</button>
+              <button type="button" class="preset-btn" data-preset="flute">Breathy Flute</button>
+            </div>
+          </div>
+          <div class="preset-family">
+            <h3>Bass</h3>
+            <div class="presets">
+              <button type="button" class="preset-btn" data-preset="bass">Deep Bass</button>
+              <button type="button" class="preset-btn" data-preset="subbass">Sub Bass</button>
+              <button type="button" class="preset-btn" data-preset="funkbass">Funk Bass</button>
+              <button type="button" class="preset-btn" data-preset="upright">Upright Pluck</button>
+            </div>
+          </div>
+          <div class="preset-family">
+            <h3>Plucks &amp; Fun</h3>
+            <div class="presets">
+              <button type="button" class="preset-btn" data-preset="marimba">Marimba</button>
+              <button type="button" class="preset-btn" data-preset="banjo">Banjo Pluck</button>
+              <button type="button" class="preset-btn" data-preset="eightbit">8-Bit Hero</button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -538,7 +590,23 @@
         chime: { wave: "sine",     detuneOn: true,  detune: 9,  attack: 0.002, decay: 1.4, sustain: 0,  release: 1.2,  cutoffHz: 12000, resonance: 1,   lfoRate: 0,   lfoDepth: 0, echoTime: 0.34, echoMix: 30, volume: 70 },
         epiano:  { wave: "triangle", detuneOn: true,  detune: 10, attack: 0.004, decay: 1.1, sustain: 22, release: 0.7,  cutoffHz: 2600,  resonance: 0.8, lfoRate: 0,   lfoDepth: 0, echoTime: 0.24, echoMix: 12, volume: 72 },
         strings: { wave: "sawtooth", detuneOn: true,  detune: 14, attack: 0.55,  decay: 0.6, sustain: 82, release: 1.3,  cutoffHz: 950,   resonance: 0.7, lfoRate: 4.8, lfoDepth: 5, echoTime: 0.32, echoMix: 18, volume: 70 },
-        choir:   { wave: "triangle", detuneOn: true,  detune: 8,  attack: 0.9,   decay: 0.8, sustain: 78, release: 1.9,  cutoffHz: 1350,  resonance: 0.5, lfoRate: 0.7, lfoDepth: 4, echoTime: 0.42, echoMix: 27, volume: 72 }
+        choir:   { wave: "triangle", detuneOn: true,  detune: 8,  attack: 0.9,   decay: 0.8, sustain: 78, release: 1.9,  cutoffHz: 1350,  resonance: 0.5, lfoRate: 0.7, lfoDepth: 4, echoTime: 0.42, echoMix: 27, volume: 72 },
+        musicbox:    { wave: "sine",     detuneOn: true,  detune: 4,  attack: 0.004, decay: 1.2,  sustain: 0,  release: 1.1,  cutoffHz: 9500,  resonance: 0.7, lfoRate: 0,   lfoDepth: 0,  echoTime: 0.3,  echoMix: 24, volume: 68 },
+        harpsichord: { wave: "sawtooth", detuneOn: true,  detune: 3,  attack: 0.003, decay: 0.35, sustain: 15, release: 0.14, cutoffHz: 3200,  resonance: 2.5, lfoRate: 0,   lfoDepth: 0,  echoTime: 0.13, echoMix: 6,  volume: 64 },
+        bell:        { wave: "sine",     detuneOn: true,  detune: 6,  attack: 0.003, decay: 1.5,  sustain: 0,  release: 2.4,  cutoffHz: 5200,  resonance: 1,   lfoRate: 0,   lfoDepth: 0,  echoTime: 0.44, echoMix: 30, volume: 70 },
+        kalimba:     { wave: "triangle", detuneOn: false, detune: 0,  attack: 0.003, decay: 0.5,  sustain: 0,  release: 0.35, cutoffHz: 2100,  resonance: 1,   lfoRate: 0,   lfoDepth: 0,  echoTime: 0.21, echoMix: 12, volume: 72 },
+        shimmer:     { wave: "triangle", detuneOn: true,  detune: 15, attack: 1.0,   decay: 1.2,  sustain: 78, release: 2.2,  cutoffHz: 3400,  resonance: 0.6, lfoRate: 0.5, lfoDepth: 4,  echoTime: 0.42, echoMix: 36, volume: 70 },
+        ocean:       { wave: "sine",     detuneOn: true,  detune: 10, attack: 1.5,   decay: 1.4,  sustain: 85, release: 2.8,  cutoffHz: 620,   resonance: 0.5, lfoRate: 0.15, lfoDepth: 5, echoTime: 0.5,  echoMix: 22, volume: 74 },
+        nightsky:    { wave: "triangle", detuneOn: true,  detune: 7,  attack: 1.2,   decay: 1.0,  sustain: 72, release: 2.4,  cutoffHz: 480,   resonance: 0.4, lfoRate: 0.25, lfoDepth: 3, echoTime: 0.47, echoMix: 27, volume: 70 },
+        squarelead:  { wave: "square",   detuneOn: false, detune: 0,  attack: 0.006, decay: 0.14, sustain: 85, release: 0.13, cutoffHz: 6000,  resonance: 2,   lfoRate: 6,   lfoDepth: 7,  echoTime: 0.15, echoMix: 13, volume: 62 },
+        brass:       { wave: "sawtooth", detuneOn: true,  detune: 5,  attack: 0.06,  decay: 0.3,  sustain: 78, release: 0.24, cutoffHz: 2300,  resonance: 2.4, lfoRate: 4.2, lfoDepth: 4,  echoTime: 0.19, echoMix: 11, volume: 68 },
+        flute:       { wave: "sine",     detuneOn: false, detune: 0,  attack: 0.14,  decay: 0.32, sustain: 86, release: 0.42, cutoffHz: 1600,  resonance: 0.6, lfoRate: 5.4, lfoDepth: 12, echoTime: 0.28, echoMix: 16, volume: 70 },
+        subbass:     { wave: "sine",     detuneOn: false, detune: 0,  attack: 0.005, decay: 0.28, sustain: 72, release: 0.14, cutoffHz: 210,   resonance: 1.4, lfoRate: 0,   lfoDepth: 0,  echoTime: 0.2,  echoMix: 0,  volume: 84 },
+        funkbass:    { wave: "sawtooth", detuneOn: false, detune: 0,  attack: 0.004, decay: 0.16, sustain: 24, release: 0.09, cutoffHz: 880,   resonance: 9,   lfoRate: 0,   lfoDepth: 0,  echoTime: 0.1,  echoMix: 4,  volume: 76 },
+        upright:     { wave: "triangle", detuneOn: false, detune: 0,  attack: 0.004, decay: 0.65, sustain: 8,  release: 0.32, cutoffHz: 1050,  resonance: 1.1, lfoRate: 0,   lfoDepth: 0,  echoTime: 0.16, echoMix: 7,  volume: 76 },
+        marimba:     { wave: "sine",     detuneOn: true,  detune: 3,  attack: 0.003, decay: 0.38, sustain: 0,  release: 0.28, cutoffHz: 2900,  resonance: 0.8, lfoRate: 0,   lfoDepth: 0,  echoTime: 0.18, echoMix: 10, volume: 72 },
+        banjo:       { wave: "sawtooth", detuneOn: true,  detune: 8,  attack: 0.003, decay: 0.26, sustain: 5,  release: 0.15, cutoffHz: 4600,  resonance: 2.6, lfoRate: 0,   lfoDepth: 0,  echoTime: 0.12, echoMix: 6,  volume: 66 },
+        eightbit:    { wave: "square",   detuneOn: false, detune: 0,  attack: 0.004, decay: 0.1,  sustain: 90, release: 0.08, cutoffHz: 11500, resonance: 1,   lfoRate: 0,   lfoDepth: 0,  echoTime: 0.14, echoMix: 15, volume: 60 }
       };
 
       /* ================= Audio graph ================= */
@@ -561,11 +629,17 @@
         masterGain = ctx.createGain();
         masterGain.gain.value = volumeToGain(state.volume);
 
+        // Master limiter: transparent in normal play (a single voice peaks
+        // around -16 dB at 70% volume), it only catches pathological stacks.
+        // Ceiling math: per-voice peak 0.30 x (0.62 + 0.62) osc gains = 0.372;
+        // the 8-voice cap bounds the dry sum to 8 x 0.372 x 0.9 (max master)
+        // = 2.68 (+8.6 dB). A -3 dB threshold at 20:1 maps that to
+        // -3 + 11.6/20 = -2.4 dB (0.76) — under 0 dB, so it can never clip.
         var comp = ctx.createDynamicsCompressor();
-        comp.threshold.value = -18;
-        comp.knee.value = 18;
-        comp.ratio.value = 12;
-        comp.attack.value = 0.003;
+        comp.threshold.value = -3;
+        comp.knee.value = 0;
+        comp.ratio.value = 20;
+        comp.attack.value = 0.002;
         comp.release.value = 0.24;
 
         var dry = ctx.createGain();
@@ -613,22 +687,85 @@
       }
 
       /* ================= Notes ================= */
-      var active = new Map(); // midi -> voice
+      var active = new Map(); // midi -> voice (key held / sustaining)
+      var releasingVoices = []; // {midi, voice} tails still ringing out
+      var MAX_VOICES = 8; // hard cap on active + releasing voices (level math above)
 
       function midiFreq(m) { return 440 * Math.pow(2, (m - 69) / 12); }
       var NOTE_NAMES = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"];
       function midiName(m) { return NOTE_NAMES[m % 12] + (Math.floor(m / 12) - 1); }
 
+      function cleanupVoice(v) {
+        try {
+          if (lfoGain) {
+            try { lfoGain.disconnect(v.o1.detune); } catch (e) {}
+            if (v.o2) { try { lfoGain.disconnect(v.o2.detune); } catch (e) {} }
+          }
+        } catch (e) {}
+        try { v.env.disconnect(); v.g1.disconnect(); if (v.g2) { v.g2.disconnect(); } } catch (e) {}
+      }
+
+      // Bring a voice to silence on a short ramp — never a hard cut mid-waveform.
+      function fadeVoiceOut(v, fadeSec) {
+        if (!ctx) { return; }
+        var t = ctx.currentTime;
+        var f = Math.max(0.008, fadeSec || 0.012);
+        try {
+          v.env.gain.cancelScheduledValues(t);
+          v.env.gain.setValueAtTime(v.env.gain.value, t);
+          v.env.gain.linearRampToValueAtTime(0, t + f);
+        } catch (e) {}
+        try { v.o1.stop(t + f + 0.03); } catch (e) {}
+        if (v.o2) { try { v.o2.stop(t + f + 0.03); } catch (e) {} }
+        window.setTimeout(function () { cleanupVoice(v); }, (f + 0.12) * 1000);
+      }
+
+      // If this note is still ringing out from a previous hit, hand off cleanly:
+      // fade the old tail in ~12 ms instead of letting the two stack and click.
+      function fadeReleasingTail(midi) {
+        for (var i = releasingVoices.length - 1; i >= 0; i--) {
+          if (releasingVoices[i].midi === midi) {
+            var rv = releasingVoices[i].voice;
+            releasingVoices.splice(i, 1);
+            fadeVoiceOut(rv, 0.012);
+          }
+        }
+      }
+
+      function stealOldestVoice() {
+        if (releasingVoices.length) {
+          var r = releasingVoices.shift();
+          fadeVoiceOut(r.voice, 0.01);
+          return;
+        }
+        var first = active.keys().next();
+        if (!first.done) {
+          var midi = first.value;
+          var v = active.get(midi);
+          active.delete(midi);
+          if (typeof arpCurrent !== "undefined" && arpCurrent === midi) { arpCurrent = null; }
+          fadeVoiceOut(v, 0.01);
+          updateNowPlaying();
+        }
+      }
+
       function noteOn(midi) {
         ensureAudio();
         if (!ctx || active.has(midi)) { return; }
+        fadeReleasingTail(midi);
+        while (active.size + releasingVoices.length >= MAX_VOICES && (active.size || releasingVoices.length)) {
+          stealOldestVoice();
+        }
         var t = ctx.currentTime;
         var peak = 0.30;
+        // Click guard: even a 0 ms attack setting gets a 4 ms ramp, so a voice
+        // never slams from 0 to full level inside a single waveform cycle.
+        var atk = Math.max(0.004, state.attack);
 
         var env = ctx.createGain();
         env.gain.setValueAtTime(0, t);
-        env.gain.linearRampToValueAtTime(peak, t + Math.max(0.002, state.attack));
-        env.gain.linearRampToValueAtTime(peak * (state.sustain / 100), t + Math.max(0.002, state.attack) + state.decay);
+        env.gain.linearRampToValueAtTime(peak, t + atk);
+        env.gain.linearRampToValueAtTime(peak * (state.sustain / 100), t + atk + state.decay);
         env.connect(filterNode);
 
         var g1 = ctx.createGain(); g1.gain.value = 0.62;
@@ -657,27 +794,28 @@
         updateNowPlaying();
       }
 
-      function noteOff(midi) {
+      function noteOff(midi, relOverride) {
         var v = active.get(midi);
         if (!v) { return; }
         active.delete(midi);
         updateNowPlaying();
         if (!ctx) { return; }
         var t = ctx.currentTime;
-        var r = Math.max(0.03, state.release);
+        // Every stop rides a ramp of at least 30 ms — no hard cuts, no clicks.
+        var r = Math.max(0.03, relOverride != null ? relOverride : state.release);
+        var entry = { midi: midi, voice: v };
+        releasingVoices.push(entry);
         try {
           v.env.gain.cancelScheduledValues(t);
           v.env.gain.setValueAtTime(v.env.gain.value, t);
           v.env.gain.linearRampToValueAtTime(0, t + r);
-          v.o1.stop(t + r + 0.05);
-          if (v.o2) { v.o2.stop(t + r + 0.05); }
         } catch (e) {}
+        try { v.o1.stop(t + r + 0.05); } catch (e) {}
+        if (v.o2) { try { v.o2.stop(t + r + 0.05); } catch (e) {} }
         window.setTimeout(function () {
-          try {
-            lfoGain.disconnect(v.o1.detune);
-            if (v.o2) { lfoGain.disconnect(v.o2.detune); }
-          } catch (e) {}
-          try { v.env.disconnect(); v.g1.disconnect(); if (v.g2) { v.g2.disconnect(); } } catch (e) {}
+          var i = releasingVoices.indexOf(entry);
+          if (i !== -1) { releasingVoices.splice(i, 1); }
+          cleanupVoice(v);
         }, (r + 0.15) * 1000);
       }
 
@@ -739,7 +877,17 @@
         if (!seq.length) { arpCurrent = null; return; }
         var next = seq[arpIndex(arpStep, seq.length)];
         arpStep++;
-        if (arpCurrent !== null) { noteOff(arpCurrent); }
+        if (arpCurrent !== null) {
+          // Gate the outgoing note: an arpeggio step must END so the next one
+          // reads as a separate note. Ringing out with the full release (up to
+          // 3 s) smears every step into one chord wash — at 8-16 steps/s the
+          // pattern is inaudible. Cap the tail at 60% of the step length
+          // (never more than the preset's own release), floored at 35 ms so
+          // the stop still rides a click-free ramp.
+          var stepDur = 1 / Math.max(1, state.arpRate);
+          var gate = Math.min(state.release, Math.max(0.035, Math.min(0.4, stepDur * 0.6)));
+          noteOff(arpCurrent, gate);
+        }
         noteOn(next);
         arpCurrent = next;
       }
