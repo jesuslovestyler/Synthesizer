@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
     <meta name="color-scheme" content="light dark" />
     <link rel="icon" href="data:," />
     <title>Synthesizer</title>
@@ -47,14 +47,19 @@
         }
       }
       * { box-sizing: border-box; }
-      html, body { margin: 0; padding: 0; }
+      html, body { margin: 0; padding: 0; overscroll-behavior: none; }
       body {
         background: linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
         color: var(--ink);
         font-family: ui-rounded, "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif;
         -webkit-tap-highlight-color: transparent;
         min-height: 100vh;
+        /* Playing is fast multi-touch motion: never let the browser read it
+           as a page gesture (pinch / double-tap zoom, sideways pan). */
+        touch-action: manipulation;
+        overflow-x: hidden;
       }
+      .card { -webkit-touch-callout: none; }
       .wrap {
         max-width: 980px;
         margin: 0 auto;
@@ -555,7 +560,16 @@
          fills every remaining pixel of the screen like a real synth app. */
       @media (orientation: landscape) and (max-height: 600px) {
         html, body { height: 100%; }
-        body { overflow: hidden; }
+        body {
+          overflow: hidden;
+          /* Pin the app shell to the viewport: in performance mode the page
+             itself can never scroll, pan or rubber-band, so the keybed and
+             the bend strip can never slide off-screen mid-play. */
+          position: fixed;
+          inset: 0;
+          width: 100%;
+          touch-action: none;
+        }
         .wrap {
           max-width: none;
           height: 100vh;
@@ -576,7 +590,10 @@
         .mini-btn { min-height: 34px; padding: 4px 10px; font-size: 14px; }
         .controls {
           order: 2;
-          flex: 0 1 auto;
+          flex: 0 0 auto;
+          /* Hard height cap: the strip can never again grow over the keys.
+             Cards scroll internally; the strip itself only scrolls sideways. */
+          height: clamp(104px, 31dvh, 150px);
           display: flex;
           flex-direction: row;
           overflow-x: auto;
@@ -584,11 +601,12 @@
           gap: 6px;
           margin-top: 0;
           padding-bottom: 3px;
-          max-height: 29%;
           -webkit-overflow-scrolling: touch;
+          touch-action: pan-x;
         }
         .controls .card {
           flex: 0 0 252px;
+          height: 100%;
           margin-top: 0;
           padding: 7px 9px;
           overflow-y: auto;
@@ -633,7 +651,9 @@
         .range-sub { display: none; }
         .now-playing { font-size: 13px; min-height: 0; }
         .kb-flex { flex: 1 1 auto; min-height: 0; gap: 8px; }
-        .keyboard { flex: 1 1 auto; height: auto; min-height: 0; }
+        /* The keybed owns whatever height is left and never renders thinner
+           than a playable strip, whatever the strip above it is doing. */
+        .keyboard { flex: 1 1 auto; height: auto; min-height: 110px; }
         .bend { flex-basis: 60px; }
         .bend-thumb { height: 68px; left: 4px; right: 4px; }
         .bend-label { font-size: 8.5px; bottom: 4px; }
@@ -663,6 +683,8 @@
               <option value="grandorgan">Grand Cathedral Organ</option>
               <option value="worshippad">Soft Worship Pad</option>
               <option value="bellchoir">Bell Choir</option>
+              <option value="heavenchoir">Heavenly Choir Pad</option>
+              <option value="prayerbells">Prayer Bells</option>
             </optgroup>
             <optgroup label="Keys &amp; Bells">
               <option value="epiano">Electric Piano</option>
@@ -677,6 +699,8 @@
               <option value="crystalbells">Crystal Bells</option>
               <option value="kalimba">Kalimba</option>
               <option value="softgrand">Soft Grand</option>
+              <option value="fmepiano">FM Electric Piano</option>
+              <option value="celesta">Celesta</option>
             </optgroup>
             <optgroup label="Pads">
               <option value="pad">Soft Pad</option>
@@ -692,6 +716,9 @@
               <option value="deepdrone">Deep Drone</option>
               <option value="triplepad">Triple Voice Pad</option>
               <option value="harmonicpad">Harmonic Shimmer</option>
+              <option value="analogpad">Warm Analog Pad</option>
+              <option value="rainpad">Rain Pad</option>
+              <option value="velvetstrings">Velvet Strings</option>
             </optgroup>
             <optgroup label="Leads">
               <option value="lead">Bright Lead</option>
@@ -704,6 +731,8 @@
               <option value="stacklead">Deep Stack Lead</option>
               <option value="fmbrass">FM Brass</option>
               <option value="metallic">Metallic Lead</option>
+              <option value="pwmlead">PWM Lead</option>
+              <option value="fmscream">FM Screamer</option>
             </optgroup>
             <optgroup label="Bass">
               <option value="bass">Deep Bass</option>
@@ -716,6 +745,9 @@
               <option value="fmgrowl">FM Growl Bass</option>
               <option value="substack">Sub Stack Bass</option>
               <option value="fmwah">FM Wah Bass</option>
+              <option value="acidbass">Acid Bass</option>
+              <option value="reesebass">Reese Bass</option>
+              <option value="fmslap">FM Slap Bass</option>
             </optgroup>
             <optgroup label="Plucks &amp; Fun">
               <option value="marimba">Marimba</option>
@@ -724,6 +756,8 @@
               <option value="berlin">Berlin Sequence</option>
               <option value="fmpluck">FM Pluck</option>
               <option value="triplepluck">Triple Pluck</option>
+              <option value="arcadepluck">Arcade Pluck</option>
+              <option value="windchime">Wind Chime</option>
             </optgroup>
           </select>
           <button type="button" class="mini-btn" id="diceBtn" aria-label="Randomize all controls">🎲 Surprise me</button>
@@ -1142,7 +1176,24 @@
         substack: P({ wave: "triangle", wave2: "sine", detuneOn: true, detune: 0, oscMix: 35, wave3: "sine", osc3On: true, osc3Level: 60, osc3Detune: 0, osc3Oct: -1, subLevel: 45, attack: 0.005, decay: 0.3, sustain: 58, release: 0.14, cutoffHz: 480, resonance: 2.5, fEnvAmt: 30, fEnvAttack: 0.005, fEnvDecay: 0.25, keyTrack: 30, drive: 10, lfoRate: 0, lfoDepth: 0, echoTime: 0.18, echoMix: 0, volume: 82 }),
         fmwah: P({ wave: "sawtooth", wave2: "square", detuneOn: true, detune: 0, oscMix: 55, fmAmt: 55, wave3: "sawtooth", osc3On: true, osc3Level: 25, osc3Detune: 0, osc3Oct: 0, subLevel: 25, attack: 0.004, decay: 0.26, sustain: 22, release: 0.11, cutoffHz: 620, resonance: 11, fEnvAmt: 75, fEnvAttack: 0.006, fEnvDecay: 0.24, keyTrack: 55, drive: 16, lfoTarget: "filter", lfoRate: 2.2, lfoDepth: 14, echoTime: 0.15, echoMix: 4, volume: 78 }),
         fmpluck: P({ wave: "triangle", wave2: "sine", detuneOn: true, detune: 0, oscMix: 50, fmAmt: 48, wave3: "sine", osc3On: true, osc3Level: 30, osc3Detune: 6, osc3Oct: 1, attack: 0.003, decay: 0.45, sustain: 0, release: 0.3, cutoffHz: 3800, resonance: 1.5, keyTrack: 40, fEnvAmt: 35, fEnvAttack: 0.003, fEnvDecay: 0.3, lfoRate: 0, lfoDepth: 0, echoTime: 0.18, echoMix: 14, reverbSize: 35, reverbMix: 12, volume: 72 }),
-        triplepluck: P({ wave: "square", wave2: "triangle", detuneOn: true, detune: 5, oscMix: 45, pulseWidth: 38, wave3: "triangle", osc3On: true, osc3Level: 40, osc3Detune: -7, osc3Oct: 1, attack: 0.003, decay: 0.32, sustain: 4, release: 0.16, cutoffHz: 3200, resonance: 3, keyTrack: 35, fEnvAmt: 50, fEnvAttack: 0.003, fEnvDecay: 0.22, glide: 0.015, lfoRate: 0, lfoDepth: 0, echoTime: 0.19, echoMix: 20, volume: 68 })
+        triplepluck: P({ wave: "square", wave2: "triangle", detuneOn: true, detune: 5, oscMix: 45, pulseWidth: 38, wave3: "triangle", osc3On: true, osc3Level: 40, osc3Detune: -7, osc3Oct: 1, attack: 0.003, decay: 0.32, sustain: 4, release: 0.16, cutoffHz: 3200, resonance: 3, keyTrack: 35, fEnvAmt: 50, fEnvAttack: 0.003, fEnvDecay: 0.22, glide: 0.015, lfoRate: 0, lfoDepth: 0, echoTime: 0.19, echoMix: 20, volume: 68 }),
+        /* ---- v7: full-engine expansion — three oscillators, FM, sub, noise,
+           pulse width, chorus/reverb/drive together (68 total). Source sums
+           stay inside the limiter budget documented at the master stage. ---- */
+        heavenchoir: P({ wave: "triangle", wave2: "triangle", detuneOn: true, detune: 9, oscMix: 50, wave3: "sine", osc3On: true, osc3Level: 34, osc3Detune: 6, osc3Oct: 1, attack: 1.1, decay: 1.0, sustain: 84, release: 2.8, cutoffHz: 1500, resonance: 0.6, keyTrack: 25, lfoRate: 0.4, lfoDepth: 3, lfo2Rate: 0.12, lfo2Depth: 30, echoTime: 0.44, echoMix: 24, reverbSize: 88, reverbMix: 46, chorusRate: 0.5, chorusDepth: 48, chorusMix: 30, volume: 72 }),
+        prayerbells: P({ wave: "sine", wave2: "sine", detuneOn: true, detune: 0, oscMix: 50, fmAmt: 55, wave3: "sine", osc3On: true, osc3Level: 36, osc3Detune: 3, osc3Oct: 1, attack: 0.002, decay: 1.5, sustain: 0, release: 2.4, cutoffHz: 12500, resonance: 0.8, keyTrack: 40, lfoRate: 0, lfoDepth: 0, echoTime: 0.4, echoMix: 30, reverbSize: 84, reverbMix: 44, volume: 70 }),
+        fmepiano: P({ wave: "sine", wave2: "sine", detuneOn: true, detune: 0, oscMix: 55, fmAmt: 42, wave3: "triangle", osc3On: true, osc3Level: 22, osc3Detune: 0, osc3Oct: 0, attack: 0.003, decay: 1.2, sustain: 16, release: 0.8, cutoffHz: 3800, resonance: 0.9, keyTrack: 45, fEnvAmt: 30, fEnvAttack: 0.003, fEnvDecay: 0.5, lfoRate: 0, lfoDepth: 0, echoTime: 0.22, echoMix: 10, reverbSize: 40, reverbMix: 16, chorusRate: 0.7, chorusDepth: 25, chorusMix: 10, volume: 72 }),
+        celesta: P({ wave: "sine", wave2: "triangle", detuneOn: true, detune: 5, oscMix: 35, wave3: "sine", osc3On: true, osc3Level: 40, osc3Detune: 7, osc3Oct: 1, attack: 0.002, decay: 0.9, sustain: 0, release: 1.0, cutoffHz: 9000, resonance: 0.8, keyTrack: 35, lfoRate: 0, lfoDepth: 0, echoTime: 0.3, echoMix: 22, reverbSize: 55, reverbMix: 24, volume: 70 }),
+        analogpad: P({ wave: "sawtooth", wave2: "square", detuneOn: true, detune: 11, oscMix: 50, pulseWidth: 42, wave3: "sawtooth", osc3On: true, osc3Level: 42, osc3Detune: -12, osc3Oct: 0, attack: 0.9, decay: 1.0, sustain: 80, release: 2.2, cutoffHz: 1250, resonance: 1.2, keyTrack: 20, lfoTarget: "pitch", lfoRate: 5, lfoDepth: 6, lfo2Rate: 0.16, lfo2Depth: 28, echoTime: 0.36, echoMix: 18, reverbSize: 60, reverbMix: 28, chorusRate: 0.55, chorusDepth: 50, chorusMix: 32, volume: 70 }),
+        rainpad: P({ wave: "triangle", wave2: "sine", detuneOn: true, detune: 8, oscMix: 45, noiseLevel: 22, wave3: "sine", osc3On: true, osc3Level: 30, osc3Detune: 4, osc3Oct: 1, attack: 1.5, decay: 1.3, sustain: 85, release: 3.0, cutoffHz: 900, resonance: 1.5, keyTrack: 15, lfoRate: 0.2, lfoDepth: 3, lfo2Rate: 0.09, lfo2Depth: 55, echoTime: 0.48, echoMix: 20, reverbSize: 80, reverbMix: 40, volume: 72 }),
+        velvetstrings: P({ wave: "sawtooth", wave2: "sawtooth", detuneOn: true, detune: 13, oscMix: 50, wave3: "sawtooth", osc3On: true, osc3Level: 45, osc3Detune: -8, osc3Oct: 0, attack: 0.7, decay: 0.8, sustain: 84, release: 1.8, cutoffHz: 1150, resonance: 0.8, keyTrack: 25, lfoRate: 4.9, lfoDepth: 5, lfo2Rate: 0.13, lfo2Depth: 22, echoTime: 0.34, echoMix: 16, reverbSize: 58, reverbMix: 26, chorusRate: 0.6, chorusDepth: 55, chorusMix: 36, volume: 70 }),
+        pwmlead: P({ wave: "square", wave2: "square", detuneOn: true, detune: 6, oscMix: 50, pulseWidth: 30, wave3: "square", osc3On: true, osc3Level: 30, osc3Detune: -6, osc3Oct: 0, attack: 0.008, decay: 0.2, sustain: 82, release: 0.18, cutoffHz: 5600, resonance: 2.5, keyTrack: 35, fEnvAmt: 25, fEnvAttack: 0.006, fEnvDecay: 0.24, lfoTarget: "pitch", lfoRate: 5.3, lfoDepth: 10, glide: 0.04, echoTime: 0.19, echoMix: 15, chorusRate: 0.8, chorusDepth: 30, chorusMix: 10, volume: 64 }),
+        fmscream: P({ wave: "sawtooth", wave2: "square", detuneOn: true, detune: 0, oscMix: 55, fmAmt: 85, wave3: "sawtooth", osc3On: true, osc3Level: 28, osc3Detune: 10, osc3Oct: 1, attack: 0.005, decay: 0.25, sustain: 70, release: 0.2, cutoffHz: 8200, resonance: 4, keyTrack: 40, fEnvAmt: 45, fEnvAttack: 0.004, fEnvDecay: 0.3, lfoRate: 6.2, lfoDepth: 9, drive: 22, glide: 0.02, echoTime: 0.16, echoMix: 13, volume: 62 }),
+        acidbass: P({ wave: "sawtooth", wave2: "square", detuneOn: true, detune: 0, oscMix: 60, pulseWidth: 50, subLevel: 20, attack: 0.004, decay: 0.2, sustain: 12, release: 0.09, cutoffHz: 380, resonance: 14, fEnvAmt: 85, fEnvAttack: 0.003, fEnvDecay: 0.18, keyTrack: 65, drive: 18, glide: 0.05, lfoRate: 0, lfoDepth: 0, echoTime: 0.14, echoMix: 0, volume: 78 }),
+        reesebass: P({ wave: "sawtooth", wave2: "sawtooth", detuneOn: true, detune: 18, oscMix: 50, wave3: "sawtooth", osc3On: true, osc3Level: 48, osc3Detune: -18, osc3Oct: 0, subLevel: 35, attack: 0.006, decay: 0.4, sustain: 65, release: 0.16, cutoffHz: 700, resonance: 1.5, keyTrack: 20, drive: 14, lfoRate: 0, lfoDepth: 0, echoTime: 0.16, echoMix: 0, volume: 80 }),
+        fmslap: P({ wave: "triangle", wave2: "sine", detuneOn: true, detune: 0, oscMix: 55, fmAmt: 70, wave3: "sine", osc3On: true, osc3Level: 25, osc3Detune: 0, osc3Oct: -1, subLevel: 25, attack: 0.003, decay: 0.3, sustain: 10, release: 0.1, cutoffHz: 2400, resonance: 3, fEnvAmt: 55, fEnvAttack: 0.003, fEnvDecay: 0.2, keyTrack: 50, drive: 10, lfoRate: 0, lfoDepth: 0, echoTime: 0.12, echoMix: 5, volume: 78 }),
+        arcadepluck: P({ wave: "square", wave2: "square", detuneOn: true, detune: 4, oscMix: 45, pulseWidth: 25, wave3: "square", osc3On: true, osc3Level: 32, osc3Detune: 0, osc3Oct: 1, attack: 0.003, decay: 0.22, sustain: 0, release: 0.12, cutoffHz: 6800, resonance: 2, keyTrack: 40, fEnvAmt: 40, fEnvAttack: 0.003, fEnvDecay: 0.15, glide: 0.01, lfoRate: 0, lfoDepth: 0, echoTime: 0.15, echoMix: 18, volume: 64 }),
+        windchime: P({ wave: "sine", wave2: "sine", detuneOn: true, detune: 0, oscMix: 50, fmAmt: 34, noiseLevel: 10, wave3: "sine", osc3On: true, osc3Level: 38, osc3Detune: 11, osc3Oct: 1, attack: 0.004, decay: 1.3, sustain: 0, release: 2.0, filterType: "bandpass", cutoffHz: 2600, resonance: 2.5, keyTrack: 55, lfoRate: 0, lfoDepth: 0, echoTime: 0.42, echoMix: 30, reverbSize: 78, reverbMix: 42, volume: 68 })
       };
 
       /* ================= Audio graph ================= */
@@ -2462,6 +2513,45 @@
           else if (e.key === "PageDown") { e.preventDefault(); setKnobFraction(knob, knobFraction(input) - 0.1); }
         });
         syncKnob(knob);
+      });
+
+      /* ================= Play-surface gesture locks (v7) =================
+         Playing is fast multi-touch motion, and mobile Safari kept reading
+         that motion as page gestures: pinch and double-tap zoom rescaled
+         the layout mid-play ("it changes sizes as I move the phone
+         around"), sideways pans scrolled the keybed away and clipped the
+         bend strip off the left edge, and edge swipes could drop the
+         browser into its tab overview. These locks keep those gestures
+         from ever reaching the page while playing. Deliberately left
+         alone: single-finger vertical scrolling in portrait (how the
+         lower panels are reached) and the landscape strip's own
+         horizontal scroll. Buttons are excluded from the double-tap
+         guard so fast repeated taps (octave +/-, waves) still register. */
+      ["gesturestart", "gesturechange", "gestureend"].forEach(function (name) {
+        document.addEventListener(name, function (e) { e.preventDefault(); }, { passive: false });
+      });
+      document.addEventListener("dblclick", function (e) { e.preventDefault(); }, { passive: false });
+      var lastTouchEnd = 0;
+      document.addEventListener("touchend", function (e) {
+        var now = Date.now();
+        var rapidRepeat = now - lastTouchEnd <= 320;
+        lastTouchEnd = now;
+        if (rapidRepeat && e.target && e.target.closest && e.target.closest(".keyboard, .bend, .knob")) {
+          e.preventDefault();
+        }
+      }, { passive: false });
+      var perfMq = window.matchMedia("(orientation: landscape) and (max-height: 600px)");
+      document.addEventListener("touchmove", function (e) {
+        if (e.touches.length > 1) { e.preventDefault(); return; }
+        if (perfMq.matches && !(e.target && e.target.closest && e.target.closest(".controls"))) {
+          e.preventDefault();
+        }
+      }, { passive: false });
+      document.addEventListener("contextmenu", function (e) {
+        if (e.target && e.target.closest && e.target.closest(".card, .keyboard, .bend")) { e.preventDefault(); }
+      });
+      window.addEventListener("orientationchange", function () {
+        window.setTimeout(function () { window.scrollTo(0, 0); }, 60);
       });
 
       buildKeyboard();
