@@ -10,6 +10,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Synthesizer" />
+    <meta name="app-version" content="2026-11-09.1" />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
     <link rel="icon" href="data:," />
     <meta name="description" content="A playable keyboard synthesizer in your browser — three oscillators, real knobs, 82 presets, and a landscape performance mode where the keys fill the screen. Free for everyone." />
@@ -231,6 +232,18 @@
         cursor: pointer;
       }
       .mini-btn:active { transform: translateY(1px); background: var(--accent-soft); }
+      .mini-btn:disabled { opacity: 0.6; cursor: default; }
+      .mini-btn:disabled:active { transform: none; background: var(--bg); }
+      #updateBtn { white-space: nowrap; }
+      .sr-only {
+        position: absolute;
+        width: 1px; height: 1px;
+        margin: -1px; padding: 0;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+        border: 0;
+      }
       /* ---------- Keyboard ---------- */
       .kb-head {
         display: flex;
@@ -672,7 +685,7 @@
         header { display: none; }
         section[aria-label="Presets"] { order: 1; flex: 0 0 auto; margin-top: 0; padding: 4px 8px; }
         section[aria-label="Presets"] h2 { display: none; }
-        .preset-bar { gap: 6px; }
+        .preset-bar { gap: 6px; flex-wrap: nowrap; }
         .preset-bar label { font-size: 14px; }
         #presetSelect { min-height: 34px; padding: 4px 10px; font-size: 14.5px; }
         .mini-btn { min-height: 34px; padding: 4px 10px; font-size: 14px; }
@@ -940,6 +953,8 @@
           </select>
           <button type="button" class="mini-btn" id="diceBtn" aria-label="Randomize all controls">🎲 Surprise me</button>
           <button type="button" class="mini-btn" id="initBtn" aria-label="Return to a plain default patch">Init</button>
+          <button type="button" class="mini-btn" id="updateBtn" aria-label="Check whether a newer version of this synthesizer is available">↻ Check for update</button>
+          <span class="sr-only" id="updateStatus" aria-live="polite"></span>
         </div>
       </section>
 
@@ -2747,6 +2762,74 @@
         applyPatch(INIT);
         markCustom();
       });
+
+      /* ================= Check for update =================
+         Home-screen apps and Safari hold onto a cached copy of this page,
+         so a new version can sit on the server while the phone keeps
+         playing the old one. This button asks the server — bypassing every
+         cache — for the page's app-version stamp (the <meta> tag in the
+         head, which is also this copy's own stamp: one source of truth).
+         Same stamp: you're current. Different stamp: reload once from a
+         cache-busting address so the fresh copy is what actually loads.
+         No stamp read (offline, blocked): say so plainly and change
+         nothing. The verdict is spoken through the button's own label so
+         the preset bar never grows a new row — it has a hard pixel budget
+         in landscape — and mirrored into a live region for screen readers. */
+      (function () {
+        var btn = $("updateBtn");
+        var status = $("updateStatus");
+        var LABEL = "↻ Check for update";
+        var restoreTimer = null;
+
+        function currentVersion() {
+          var m = document.querySelector('meta[name="app-version"]');
+          return m ? m.getAttribute("content") : null;
+        }
+        function say(msg, holdMs) {
+          btn.textContent = msg;
+          status.textContent = msg;
+          if (restoreTimer !== null) { window.clearTimeout(restoreTimer); restoreTimer = null; }
+          if (holdMs) {
+            restoreTimer = window.setTimeout(function () {
+              restoreTimer = null;
+              btn.textContent = LABEL;
+              btn.disabled = false;
+            }, holdMs);
+          }
+        }
+
+        btn.addEventListener("click", function () {
+          if (btn.disabled) { return; }
+          btn.disabled = true;
+          say("Checking…", 0);
+          if (!window.fetch) { say("Couldn't check on this browser", 4000); return; }
+          var here = window.location.href.split("#")[0];
+          var sep = here.indexOf("?") === -1 ? "?" : "&";
+          fetch(here + sep + "_updatecheck=" + Date.now(), {
+            cache: "no-store",
+            credentials: "same-origin"
+          }).then(function (res) {
+            if (!res.ok) { throw new Error("http " + res.status); }
+            return res.text();
+          }).then(function (html) {
+            var m = /name="app-version"\s+content="([^"]+)"/.exec(html);
+            var served = m ? m[1] : null;
+            if (!served) { say("Couldn't check — try again", 4000); return; }
+            if (served === currentVersion()) {
+              say("✓ You're up to date", 4000);
+              return;
+            }
+            // A newer copy is on the server: load it fresh, once.
+            say("Update found — loading it…", 0);
+            var base = here.split("?")[0];
+            window.setTimeout(function () {
+              window.location.replace(base + "?v=" + encodeURIComponent(served) + "&t=" + Date.now());
+            }, 450);
+          }).catch(function () {
+            say("Couldn't check — offline?", 4000);
+          });
+        });
+      })();
 
       /* Start audio on the first touch of any control, per autoplay rules. */
       document.addEventListener("pointerdown", ensureAudio, { once: false });
