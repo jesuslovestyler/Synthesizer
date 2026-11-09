@@ -538,6 +538,84 @@
       @media (prefers-reduced-motion: reduce) {
         .switch::after { transition: none; }
       }
+      /* ---------- Rotate hint (portrait phones only) ---------- */
+      .rotate-hint {
+        display: none;
+        margin: 8px auto 0;
+        max-width: 560px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--accent-deep);
+      }
+      @media (max-width: 700px) and (orientation: portrait) {
+        .rotate-hint { display: block; }
+      }
+      /* ---------- Landscape performance mode (phone turned sideways) ----------
+         Controls ride up top in a horizontally scrolling strip; the keyboard
+         fills every remaining pixel of the screen like a real synth app. */
+      @media (orientation: landscape) and (max-height: 600px) {
+        html, body { height: 100%; }
+        body { overflow: hidden; }
+        .wrap {
+          max-width: none;
+          height: 100vh;
+          height: 100dvh;
+          padding: 6px 8px 8px;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+        .topbar { order: 0; flex: 0 0 auto; padding: 0; }
+        .home-pill { min-height: 32px; padding: 4px 12px; font-size: 13.5px; box-shadow: none; }
+        header { display: none; }
+        section[aria-label="Presets"] { order: 1; flex: 0 0 auto; margin-top: 0; padding: 6px 10px; }
+        section[aria-label="Presets"] h2 { display: none; }
+        #presetSelect { min-height: 40px; }
+        .mini-btn { min-height: 40px; }
+        .controls {
+          order: 2;
+          flex: 0 1 auto;
+          display: flex;
+          flex-direction: row;
+          overflow-x: auto;
+          overflow-y: hidden;
+          gap: 8px;
+          margin-top: 0;
+          padding-bottom: 4px;
+          max-height: 46%;
+          -webkit-overflow-scrolling: touch;
+        }
+        .controls .card {
+          flex: 0 0 320px;
+          margin-top: 0;
+          padding: 10px 12px;
+          overflow-y: auto;
+          border-radius: 12px;
+        }
+        .controls .card h2 { font-size: 16px; margin-bottom: 6px; }
+        .knob { width: 58px; height: 58px; }
+        .knob.knob-lg { width: 68px; height: 68px; }
+        .knob-grid { gap: 8px 4px; padding: 4px 0 2px; }
+        .knob-name { font-size: 11px; }
+        .knob-val { font-size: 12.5px; }
+        .wave-btn { min-height: 38px; font-size: 13.5px; }
+        section[aria-label="Keyboard"] {
+          order: 3;
+          flex: 1 1 auto;
+          min-height: 0;
+          margin-top: 0;
+          padding: 8px 10px 10px;
+          display: flex;
+          flex-direction: column;
+          border-radius: 12px;
+        }
+        .kb-head { margin-bottom: 6px; }
+        .oct-btn { width: 42px; height: 42px; font-size: 22px; border-radius: 10px; }
+        .kb-flex { flex: 1 1 auto; min-height: 0; }
+        .keyboard { flex: 1 1 auto; height: auto; min-height: 0; }
+        .bend { flex-basis: 40px; }
+        .fine-print { display: none; }
+      }
     </style>
   </head>
   <body>
@@ -549,6 +627,7 @@
       <header>
         <h1>Synthesizer</h1>
         <p class="intro">Make a joyful noise — tap the keys, hold a chord, and shape the sound until it sings. Everyone is welcome at this instrument.</p>
+        <p class="rotate-hint">Tip: turn your phone sideways — the keys fill the whole screen and the controls move up top, like a real synth app.</p>
       </header>
 
       <section class="card" aria-label="Presets">
@@ -569,8 +648,8 @@
               <option value="musicbox">Music Box</option>
               <option value="harpsichord">Harpsichord</option>
               <option value="bell">Cathedral Bell</option>
+              <option value="fmbell">FM Bell</option>
               <option value="kalimba">Kalimba</option>
-              <option value="lofi">Lo-Fi Keys</option>
               <option value="softgrand">Soft Grand</option>
             </optgroup>
             <optgroup label="Pads">
@@ -593,6 +672,7 @@
               <option value="flute">Breathy Flute</option>
               <option value="analogbrass">Analog Brass</option>
               <option value="theremin">Theremin Lead</option>
+              <option value="triplestack">Triple Stack Lead</option>
             </optgroup>
             <optgroup label="Bass">
               <option value="bass">Deep Bass</option>
@@ -602,6 +682,7 @@
               <option value="squelch">Squelch Bass</option>
               <option value="subrunner">Sub Runner</option>
               <option value="roundbass">Round Bass</option>
+              <option value="fmgrowl">FM Growl Bass</option>
             </optgroup>
             <optgroup label="Plucks &amp; Fun">
               <option value="marimba">Marimba</option>
@@ -651,39 +732,78 @@
             <button type="button" class="wave-btn" data-wave2="square">Square</button>
             <button type="button" class="wave-btn" data-wave2="sawtooth">Sawtooth</button>
           </div>
+          <p class="row-label">Oscillator 3</p>
+          <div class="wave-row" id="wave3Row">
+            <button type="button" class="wave-btn" data-wave3="sine">Sine</button>
+            <button type="button" class="wave-btn" data-wave3="triangle">Triangle</button>
+            <button type="button" class="wave-btn" data-wave3="square">Square</button>
+            <button type="button" class="wave-btn" data-wave3="sawtooth">Sawtooth</button>
+          </div>
+          <div class="toggle-row">
+            <div class="t-label">Third voice<small>Oscillator 3 on or off — a third layer for stacked sounds</small></div>
+            <button type="button" class="switch" id="osc3Toggle" role="switch" aria-checked="false" aria-label="Third oscillator on or off"></button>
+          </div>
+          <p class="row-label">Osc 3 octave</p>
+          <div class="wave-row" id="osc3OctRow">
+            <button type="button" class="wave-btn" data-osc3oct="-1">−1</button>
+            <button type="button" class="wave-btn" data-osc3oct="0">0</button>
+            <button type="button" class="wave-btn" data-osc3oct="1">+1</button>
+          </div>
           <div class="toggle-row">
             <div class="t-label">Second voice<small>Oscillator 2 on or off — it thickens the sound</small></div>
             <button type="button" class="switch" id="detuneToggle" role="switch" aria-checked="true" aria-label="Second oscillator on or off"></button>
           </div>
-          <div class="slider-row">
-            <label for="oscMix">Osc mix</label>
-            <input type="range" id="oscMix" min="0" max="100" step="1" value="50" />
-            <span class="val" id="oscMixVal"></span>
-          </div>
-          <div class="knob-grid" style="grid-template-columns: repeat(auto-fit, minmax(88px, 120px)); justify-content: start;">
+          <div class="knob-grid">
+            <div class="knob-cell">
+              <div class="knob" data-target="oscMix" role="slider" tabindex="0" aria-label="Oscillator 1 and 2 mix, drag up or down to turn"></div>
+              <div class="knob-name">Osc Mix</div>
+              <div class="knob-val" id="oscMixVal"></div>
+              <input type="range" id="oscMix" class="knob-src" min="0" max="100" step="1" value="50" tabindex="-1" aria-hidden="true" />
+            </div>
             <div class="knob-cell">
               <div class="knob" data-target="detune" role="slider" tabindex="0" aria-label="Oscillator detune, drag up or down to turn"></div>
               <div class="knob-name">Detune</div>
               <div class="knob-val" id="detuneVal"></div>
               <input type="range" id="detune" class="knob-src" min="-50" max="50" step="1" value="6" tabindex="-1" aria-hidden="true" />
             </div>
+            <div class="knob-cell">
+              <div class="knob" data-target="osc3Level" role="slider" tabindex="0" aria-label="Oscillator 3 level, drag up or down to turn"></div>
+              <div class="knob-name">Osc 3 Level</div>
+              <div class="knob-val" id="osc3LevelVal"></div>
+              <input type="range" id="osc3Level" class="knob-src" min="0" max="100" step="1" value="40" tabindex="-1" aria-hidden="true" />
+            </div>
+            <div class="knob-cell">
+              <div class="knob" data-target="osc3Detune" role="slider" tabindex="0" aria-label="Oscillator 3 detune, drag up or down to turn"></div>
+              <div class="knob-name">Osc 3 Tune</div>
+              <div class="knob-val" id="osc3DetuneVal"></div>
+              <input type="range" id="osc3Detune" class="knob-src" min="-50" max="50" step="1" value="0" tabindex="-1" aria-hidden="true" />
+            </div>
+            <div class="knob-cell">
+              <div class="knob" data-target="fmAmt" role="slider" tabindex="0" aria-label="FM amount, oscillator 2 modulating oscillator 1, drag up or down to turn"></div>
+              <div class="knob-name">FM Amount</div>
+              <div class="knob-val" id="fmAmtVal"></div>
+              <input type="range" id="fmAmt" class="knob-src" min="0" max="100" step="1" value="0" tabindex="-1" aria-hidden="true" />
+            </div>
+            <div class="knob-cell">
+              <div class="knob" data-target="subLevel" role="slider" tabindex="0" aria-label="Sub oscillator level, drag up or down to turn"></div>
+              <div class="knob-name">Sub-Osc</div>
+              <div class="knob-val" id="subLevelVal"></div>
+              <input type="range" id="subLevel" class="knob-src" min="0" max="100" step="1" value="0" tabindex="-1" aria-hidden="true" />
+            </div>
+            <div class="knob-cell">
+              <div class="knob" data-target="pulseWidth" role="slider" tabindex="0" aria-label="Pulse width, drag up or down to turn"></div>
+              <div class="knob-name">Pulse Width</div>
+              <div class="knob-val" id="pulseWidthVal"></div>
+              <input type="range" id="pulseWidth" class="knob-src" min="5" max="95" step="1" value="50" tabindex="-1" aria-hidden="true" />
+            </div>
+            <div class="knob-cell">
+              <div class="knob" data-target="noiseLevel" role="slider" tabindex="0" aria-label="Noise level, drag up or down to turn"></div>
+              <div class="knob-name">Noise</div>
+              <div class="knob-val" id="noiseLevelVal"></div>
+              <input type="range" id="noiseLevel" class="knob-src" min="0" max="100" step="1" value="0" tabindex="-1" aria-hidden="true" />
+            </div>
           </div>
-          <p class="knob-hint">Drag a knob up or down to turn it — arrow keys work too.</p>
-          <div class="slider-row">
-            <label for="subLevel">Sub-osc</label>
-            <input type="range" id="subLevel" min="0" max="100" step="1" value="0" />
-            <span class="val" id="subLevelVal"></span>
-          </div>
-          <div class="slider-row">
-            <label for="pulseWidth">Pulse width</label>
-            <input type="range" id="pulseWidth" min="5" max="95" step="1" value="50" />
-            <span class="val" id="pulseWidthVal"></span>
-          </div>
-          <div class="slider-row">
-            <label for="noiseLevel">Noise</label>
-            <input type="range" id="noiseLevel" min="0" max="100" step="1" value="0" />
-            <span class="val" id="noiseLevelVal"></span>
-          </div>
+          <p class="knob-hint">Drag a knob up or down to turn it — arrow keys work too. FM lets Oscillator 2 shake Oscillator 1's pitch for bells and growls.</p>
         </section>
 
         <section class="card" aria-label="Envelope">
@@ -737,15 +857,19 @@
               <input type="range" id="resonance" class="knob-src" min="0" max="20" step="0.1" value="1" tabindex="-1" aria-hidden="true" />
             </div>
           </div>
-          <div class="slider-row">
-            <label for="keyTrack">Key tracking</label>
-            <input type="range" id="keyTrack" min="0" max="100" step="1" value="0" />
-            <span class="val" id="keyTrackVal"></span>
-          </div>
-          <div class="slider-row">
-            <label for="fEnvAmt">Env amount</label>
-            <input type="range" id="fEnvAmt" min="0" max="100" step="1" value="0" />
-            <span class="val" id="fEnvAmtVal"></span>
+          <div class="knob-grid" style="grid-template-columns: repeat(auto-fit, minmax(88px, 120px)); justify-content: start;">
+            <div class="knob-cell">
+              <div class="knob" data-target="keyTrack" role="slider" tabindex="0" aria-label="Filter key tracking, drag up or down to turn"></div>
+              <div class="knob-name">Key Track</div>
+              <div class="knob-val" id="keyTrackVal"></div>
+              <input type="range" id="keyTrack" class="knob-src" min="0" max="100" step="1" value="0" tabindex="-1" aria-hidden="true" />
+            </div>
+            <div class="knob-cell">
+              <div class="knob" data-target="fEnvAmt" role="slider" tabindex="0" aria-label="Filter envelope amount, drag up or down to turn"></div>
+              <div class="knob-name">Env Amount</div>
+              <div class="knob-val" id="fEnvAmtVal"></div>
+              <input type="range" id="fEnvAmt" class="knob-src" min="0" max="100" step="1" value="0" tabindex="-1" aria-hidden="true" />
+            </div>
           </div>
           <div class="slider-row">
             <label for="fEnvAttack">Env attack</label>
@@ -787,15 +911,19 @@
               <input type="range" id="glide" class="knob-src" min="0" max="0.5" step="0.005" value="0" tabindex="-1" aria-hidden="true" />
             </div>
           </div>
-          <div class="slider-row">
-            <label for="lfo2Rate">LFO 2 rate</label>
-            <input type="range" id="lfo2Rate" min="0.02" max="4" step="0.01" value="0.3" />
-            <span class="val" id="lfo2RateVal"></span>
-          </div>
-          <div class="slider-row">
-            <label for="lfo2Depth">LFO 2 depth</label>
-            <input type="range" id="lfo2Depth" min="0" max="100" step="1" value="0" />
-            <span class="val" id="lfo2DepthVal"></span>
+          <div class="knob-grid">
+            <div class="knob-cell">
+              <div class="knob" data-target="lfo2Rate" role="slider" tabindex="0" aria-label="LFO 2 rate, drag up or down to turn"></div>
+              <div class="knob-name">LFO 2 Rate</div>
+              <div class="knob-val" id="lfo2RateVal"></div>
+              <input type="range" id="lfo2Rate" class="knob-src" min="0.02" max="4" step="0.01" value="0.3" tabindex="-1" aria-hidden="true" />
+            </div>
+            <div class="knob-cell">
+              <div class="knob" data-target="lfo2Depth" role="slider" tabindex="0" aria-label="LFO 2 depth, drag up or down to turn"></div>
+              <div class="knob-name">LFO 2 Depth</div>
+              <div class="knob-val" id="lfo2DepthVal"></div>
+              <input type="range" id="lfo2Depth" class="knob-src" min="0" max="100" step="1" value="0" tabindex="-1" aria-hidden="true" />
+            </div>
           </div>
         </section>
 
@@ -806,21 +934,13 @@
             <input type="range" id="echoTime" min="0.03" max="0.8" step="0.01" value="0.27" />
             <span class="val" id="echoTimeVal"></span>
           </div>
-          <div class="slider-row">
-            <label for="echoMix">Echo mix</label>
-            <input type="range" id="echoMix" min="0" max="60" step="1" value="14" />
-            <span class="val" id="echoMixVal"></span>
-          </div>
+
           <div class="slider-row">
             <label for="reverbSize">Reverb size</label>
             <input type="range" id="reverbSize" min="0" max="100" step="1" value="35" />
             <span class="val" id="reverbSizeVal"></span>
           </div>
-          <div class="slider-row">
-            <label for="reverbMix">Reverb mix</label>
-            <input type="range" id="reverbMix" min="0" max="60" step="1" value="0" />
-            <span class="val" id="reverbMixVal"></span>
-          </div>
+
           <div class="slider-row">
             <label for="chorusRate">Chorus rate</label>
             <input type="range" id="chorusRate" min="0.05" max="6" step="0.05" value="0.8" />
@@ -831,15 +951,31 @@
             <input type="range" id="chorusDepth" min="0" max="100" step="1" value="30" />
             <span class="val" id="chorusDepthVal"></span>
           </div>
-          <div class="slider-row">
-            <label for="chorusMix">Chorus mix</label>
-            <input type="range" id="chorusMix" min="0" max="60" step="1" value="0" />
-            <span class="val" id="chorusMixVal"></span>
-          </div>
-          <div class="slider-row">
-            <label for="drive">Drive</label>
-            <input type="range" id="drive" min="0" max="100" step="1" value="0" />
-            <span class="val" id="driveVal"></span>
+          <div class="knob-grid">
+            <div class="knob-cell">
+              <div class="knob" data-target="echoMix" role="slider" tabindex="0" aria-label="Echo mix, drag up or down to turn"></div>
+              <div class="knob-name">Echo Mix</div>
+              <div class="knob-val" id="echoMixVal"></div>
+              <input type="range" id="echoMix" class="knob-src" min="0" max="60" step="1" value="14" tabindex="-1" aria-hidden="true" />
+            </div>
+            <div class="knob-cell">
+              <div class="knob" data-target="reverbMix" role="slider" tabindex="0" aria-label="Reverb mix, drag up or down to turn"></div>
+              <div class="knob-name">Reverb Mix</div>
+              <div class="knob-val" id="reverbMixVal"></div>
+              <input type="range" id="reverbMix" class="knob-src" min="0" max="60" step="1" value="0" tabindex="-1" aria-hidden="true" />
+            </div>
+            <div class="knob-cell">
+              <div class="knob" data-target="chorusMix" role="slider" tabindex="0" aria-label="Chorus mix, drag up or down to turn"></div>
+              <div class="knob-name">Chorus Mix</div>
+              <div class="knob-val" id="chorusMixVal"></div>
+              <input type="range" id="chorusMix" class="knob-src" min="0" max="60" step="1" value="0" tabindex="-1" aria-hidden="true" />
+            </div>
+            <div class="knob-cell">
+              <div class="knob" data-target="drive" role="slider" tabindex="0" aria-label="Drive, drag up or down to turn"></div>
+              <div class="knob-name">Drive</div>
+              <div class="knob-val" id="driveVal"></div>
+              <input type="range" id="drive" class="knob-src" min="0" max="100" step="1" value="0" tabindex="-1" aria-hidden="true" />
+            </div>
           </div>
         </section>
 
@@ -863,10 +999,13 @@
 
         <section class="card volume-card" aria-label="Volume">
           <h2>Volume</h2>
-          <div class="slider-row">
-            <label for="volume">Volume</label>
-            <input type="range" id="volume" min="0" max="100" step="1" value="70" />
-            <span class="val" id="volumeVal"></span>
+          <div class="knob-grid" style="grid-template-columns: repeat(auto-fit, minmax(100px, 130px)); justify-content: start;">
+            <div class="knob-cell">
+              <div class="knob knob-lg" data-target="volume" role="slider" tabindex="0" aria-label="Volume, drag up or down to turn"></div>
+              <div class="knob-name">Volume</div>
+              <div class="knob-val" id="volumeVal"></div>
+              <input type="range" id="volume" class="knob-src" min="0" max="100" step="1" value="70" tabindex="-1" aria-hidden="true" />
+            </div>
           </div>
         </section>
       </div>
@@ -884,6 +1023,7 @@
       // original 24 keep sounding like themselves unless a preset says otherwise.
       var NEUTRAL = {
         wave2: "sine", oscMix: 50, subLevel: 0, pulseWidth: 50, noiseLevel: 0,
+        wave3: "sawtooth", osc3On: false, osc3Level: 40, osc3Detune: 0, osc3Oct: 0, fmAmt: 0,
         filterType: "lowpass", fEnvAmt: 0, fEnvAttack: 0.01, fEnvDecay: 0.3, keyTrack: 0,
         lfoTarget: "pitch", lfo2Rate: 0.3, lfo2Depth: 0, glide: 0,
         reverbSize: 35, reverbMix: 0, chorusRate: 0.8, chorusDepth: 30, chorusMix: 0, drive: 0
@@ -938,7 +1078,6 @@
         cathedral: P({ wave: "triangle", wave2: "sine", detuneOn: true, detune: 10, oscMix: 45, attack: 1.1, decay: 1.0, sustain: 80, release: 2.6, cutoffHz: 2400, resonance: 0.6, keyTrack: 20, lfoRate: 0.5, lfoDepth: 4, lfo2Rate: 0.2, lfo2Depth: 25, echoTime: 0.42, echoMix: 20, reverbSize: 85, reverbMix: 45, chorusRate: 0.6, chorusDepth: 45, chorusMix: 30, volume: 72 }),
         analogbrass: P({ wave: "sawtooth", wave2: "sawtooth", detuneOn: true, detune: 6, oscMix: 55, attack: 0.07, decay: 0.35, sustain: 75, release: 0.25, cutoffHz: 1400, resonance: 2.2, fEnvAmt: 55, fEnvAttack: 0.06, fEnvDecay: 0.4, keyTrack: 40, lfoRate: 4.4, lfoDepth: 4, echoTime: 0.19, echoMix: 10, volume: 68 }),
         squelch: P({ wave: "sawtooth", wave2: "sawtooth", detuneOn: false, detune: 0, subLevel: 25, attack: 0.004, decay: 0.24, sustain: 18, release: 0.1, cutoffHz: 300, resonance: 12, fEnvAmt: 80, fEnvAttack: 0.004, fEnvDecay: 0.22, keyTrack: 60, lfoRate: 0, lfoDepth: 0, echoTime: 0.2, echoMix: 0, volume: 78 }),
-        lofi: P({ wave: "triangle", wave2: "sine", detuneOn: true, detune: 14, oscMix: 30, noiseLevel: 14, attack: 0.005, decay: 0.9, sustain: 25, release: 0.6, cutoffHz: 1200, resonance: 0.7, lfoRate: 0.6, lfoDepth: 9, echoTime: 0.26, echoMix: 14, reverbSize: 30, reverbMix: 12, drive: 38, volume: 70 }),
         glass: P({ wave: "sine", wave2: "triangle", detuneOn: true, detune: 9, oscMix: 40, attack: 1.4, decay: 1.2, sustain: 75, release: 2.8, filterType: "bandpass", cutoffHz: 1800, resonance: 3.5, keyTrack: 50, lfoRate: 0.4, lfoDepth: 3, lfo2Rate: 0.15, lfo2Depth: 40, echoTime: 0.4, echoMix: 24, reverbSize: 70, reverbMix: 38, chorusDepth: 40, chorusMix: 25, volume: 70 }),
         berlin: P({ wave: "square", wave2: "square", detuneOn: false, detune: 0, pulseWidth: 32, attack: 0.003, decay: 0.18, sustain: 8, release: 0.09, cutoffHz: 2600, resonance: 4, fEnvAmt: 45, fEnvAttack: 0.003, fEnvDecay: 0.16, keyTrack: 30, glide: 0.02, lfoRate: 0, lfoDepth: 0, echoTime: 0.19, echoMix: 22, volume: 70 }),
         cosmic: P({ wave: "sawtooth", wave2: "sawtooth", detuneOn: true, detune: 12, oscMix: 50, attack: 1.6, decay: 1.4, sustain: 85, release: 3.0, cutoffHz: 900, resonance: 6, lfoRate: 0.3, lfoDepth: 3, lfo2Rate: 0.08, lfo2Depth: 85, echoTime: 0.5, echoMix: 20, reverbSize: 60, reverbMix: 30, volume: 70 }),
@@ -951,7 +1090,11 @@
         aurora: P({ wave: "sawtooth", wave2: "triangle", detuneOn: true, detune: 13, oscMix: 50, attack: 1.5, decay: 1.4, sustain: 85, release: 3.0, cutoffHz: 750, resonance: 3, lfoTarget: "filter", lfoRate: 0.22, lfoDepth: 20, lfo2Rate: 0.1, lfo2Depth: 60, echoTime: 0.48, echoMix: 24, reverbSize: 70, reverbMix: 34, chorusRate: 0.4, chorusDepth: 35, chorusMix: 20, volume: 70 }),
         deepdrone: P({ wave: "sine", wave2: "triangle", detuneOn: true, detune: 6, oscMix: 40, subLevel: 45, attack: 1.5, decay: 1.2, sustain: 90, release: 3.0, cutoffHz: 420, resonance: 1.2, lfoRate: 0.12, lfoDepth: 2, lfo2Rate: 0.07, lfo2Depth: 45, glide: 0.12, echoTime: 0.5, echoMix: 16, reverbSize: 78, reverbMix: 30, volume: 74 }),
         theremin: P({ wave: "sine", wave2: "sine", detuneOn: false, detune: 0, attack: 0.09, decay: 0.2, sustain: 90, release: 0.3, cutoffHz: 2800, resonance: 0.8, lfoRate: 5.8, lfoDepth: 9, glide: 0.18, echoTime: 0.3, echoMix: 20, reverbSize: 45, reverbMix: 22, volume: 70 }),
-        roundbass: P({ wave: "triangle", wave2: "sine", detuneOn: true, detune: 3, oscMix: 30, subLevel: 35, attack: 0.005, decay: 0.35, sustain: 55, release: 0.16, cutoffHz: 640, resonance: 3, fEnvAmt: 35, fEnvAttack: 0.005, fEnvDecay: 0.3, keyTrack: 30, drive: 8, lfoRate: 0, lfoDepth: 0, echoTime: 0.18, echoMix: 0, volume: 80 })
+        roundbass: P({ wave: "triangle", wave2: "sine", detuneOn: true, detune: 3, oscMix: 30, subLevel: 35, attack: 0.005, decay: 0.35, sustain: 55, release: 0.16, cutoffHz: 640, resonance: 3, fEnvAmt: 35, fEnvAttack: 0.005, fEnvDecay: 0.3, keyTrack: 30, drive: 8, lfoRate: 0, lfoDepth: 0, echoTime: 0.18, echoMix: 0, volume: 80 }),
+        /* ---- v5: third oscillator & FM showcase presets (42 total) ---- */
+        fmbell: P({ wave: "sine", wave2: "sine", detuneOn: true, detune: 0, oscMix: 55, fmAmt: 62, attack: 0.002, decay: 1.5, sustain: 0, release: 1.6, cutoffHz: 11000, resonance: 0.8, keyTrack: 35, lfoRate: 0, lfoDepth: 0, echoTime: 0.34, echoMix: 26, reverbSize: 55, reverbMix: 26, volume: 70 }),
+        triplestack: P({ wave: "sawtooth", wave2: "sawtooth", detuneOn: true, detune: 7, oscMix: 50, wave3: "sawtooth", osc3On: true, osc3Level: 55, osc3Detune: -9, osc3Oct: 0, attack: 0.01, decay: 0.2, sustain: 82, release: 0.2, cutoffHz: 6800, resonance: 3.5, keyTrack: 30, fEnvAmt: 25, fEnvAttack: 0.008, fEnvDecay: 0.25, lfoRate: 5.2, lfoDepth: 5, echoTime: 0.2, echoMix: 16, chorusRate: 0.9, chorusDepth: 35, chorusMix: 18, volume: 64 }),
+        fmgrowl: P({ wave: "sawtooth", wave2: "square", detuneOn: true, detune: 0, oscMix: 60, fmAmt: 45, subLevel: 40, attack: 0.004, decay: 0.28, sustain: 30, release: 0.12, cutoffHz: 700, resonance: 8, fEnvAmt: 60, fEnvAttack: 0.004, fEnvDecay: 0.26, keyTrack: 45, drive: 20, lfoRate: 0, lfoDepth: 0, echoTime: 0.16, echoMix: 0, volume: 78 })
       };
 
       /* ================= Audio graph ================= */
@@ -1147,7 +1290,7 @@
       function pwmTick() {
         if (!ctx || state.lfoTarget !== "pitch" || state.lfoDepth <= 0) { return; }
         var anyPulse = false;
-        active.forEach(function (v) { if (v.p1 || v.p2) { anyPulse = true; } });
+        active.forEach(function (v) { if (v.p1 || v.p2 || v.p3) { anyPulse = true; } });
         if (!anyPulse) { return; }
         var swing = Math.min(20, state.lfoDepth * 0.5);
         var w = state.pulseWidth + Math.sin(2 * Math.PI * state.lfoRate * ctx.currentTime) * swing;
@@ -1157,6 +1300,7 @@
           try {
             if (v.p1) { v.o1.setPeriodicWave(wave); }
             if (v.p2 && v.o2) { v.o2.setPeriodicWave(wave); }
+            if (v.p3 && v.o3) { v.o3.setPeriodicWave(wave); }
           } catch (e) {}
         });
       }
@@ -1205,6 +1349,8 @@
       }
       function oscGain1() { return 0.72 * (1 - state.oscMix / 100); }
       function oscGain2() { return 0.72 * (state.oscMix / 100); }
+      function osc3GainVal() { return 0.5 * (state.osc3Level / 100); }
+      function fmDepthHz(freq) { return (state.fmAmt / 100) * freq * 1.5; }
       function subGainVal() { return 0.38 * (state.subLevel / 100); }
       function noiseGainVal() { return 0.30 * (state.noiseLevel / 100); }
 
@@ -1212,6 +1358,7 @@
         if (!lfoGain) { return; }
         try { lfoGain.disconnect(v.o1.detune); } catch (e) {}
         if (v.o2) { try { lfoGain.disconnect(v.o2.detune); } catch (e) {} }
+        if (v.o3) { try { lfoGain.disconnect(v.o3.detune); } catch (e) {} }
         if (v.sub) { try { lfoGain.disconnect(v.sub.detune); } catch (e) {} }
         try { lfoGain.disconnect(v.filter.frequency); } catch (e) {}
         try { lfoGain.disconnect(v.trem.gain); } catch (e) {}
@@ -1225,6 +1372,7 @@
           else {
             lfoGain.connect(v.o1.detune);
             if (v.o2) { lfoGain.connect(v.o2.detune); }
+            if (v.o3) { lfoGain.connect(v.o3.detune); }
             if (v.sub) { lfoGain.connect(v.sub.detune); }
           }
         } catch (e) {}
@@ -1233,7 +1381,7 @@
       function cleanupVoice(v) {
         unwireLfo(v);
         if (lfo2Gain) { try { lfo2Gain.disconnect(v.filter.frequency); } catch (e) {} }
-        var nodes = [v.o1, v.o2, v.sub, v.noiseSrc, v.g1, v.g2, v.gSub, v.gNoise, v.filter, v.trem, v.env];
+        var nodes = [v.o1, v.o2, v.o3, v.sub, v.noiseSrc, v.g1, v.g2, v.g3, v.gSub, v.gNoise, v.fmGain, v.filter, v.trem, v.env];
         for (var i = 0; i < nodes.length; i++) {
           if (nodes[i]) { try { nodes[i].disconnect(); } catch (e) {} }
         }
@@ -1241,6 +1389,7 @@
       function stopSources(v, when) {
         try { v.o1.stop(when); } catch (e) {}
         if (v.o2) { try { v.o2.stop(when); } catch (e) {} }
+        if (v.o3) { try { v.o3.stop(when); } catch (e) {} }
         if (v.sub) { try { v.sub.stop(when); } catch (e) {} }
         if (v.noiseSrc) { try { v.noiseSrc.stop(when); } catch (e) {} }
       }
@@ -1349,6 +1498,27 @@
           o2.connect(g2); g2.connect(filter);
         }
 
+        // Oscillator 3: an independent third layer with its own waveform,
+        // level, detune and octave shift.
+        var o3 = null, g3 = null;
+        if (state.osc3On) {
+          g3 = ctx.createGain(); g3.gain.value = osc3GainVal();
+          o3 = ctx.createOscillator();
+          applyWave(o3, state.wave3, state.pulseWidth);
+          setOscFreq(o3, freq * Math.pow(2, state.osc3Oct), t);
+          o3.detune.value = state.osc3Detune + bendCents;
+          o3.connect(g3); g3.connect(filter);
+        }
+
+        // FM: Oscillator 2 (when present) also modulates Oscillator 1's
+        // frequency through a depth gain — the classic bell/growl recipe.
+        // The gain node always exists with Osc 2 so the FM knob works live.
+        var fmGain = null;
+        if (o2) {
+          fmGain = ctx.createGain(); fmGain.gain.value = fmDepthHz(freq);
+          o2.connect(fmGain); fmGain.connect(o1.frequency);
+        }
+
         // Sub-oscillator: a sine one octave below Osc 1.
         var sub = null, gSub = null;
         if (state.subLevel > 0) {
@@ -1370,16 +1540,18 @@
         }
 
         var voice = {
-          midi: midi, o1: o1, o2: o2, sub: sub, noiseSrc: noiseSrc,
-          g1: g1, g2: g2, gSub: gSub, gNoise: gNoise,
+          midi: midi, o1: o1, o2: o2, o3: o3, sub: sub, noiseSrc: noiseSrc,
+          g1: g1, g2: g2, g3: g3, gSub: gSub, gNoise: gNoise, fmGain: fmGain,
           filter: filter, trem: trem, env: env, baseCutoff: base,
-          p1: state.wave === "square", p2: state.detuneOn && state.wave2 === "square"
+          p1: state.wave === "square", p2: state.detuneOn && state.wave2 === "square",
+          p3: state.osc3On && state.wave3 === "square"
         };
         wireLfo(voice);
         try { lfo2Gain.connect(filter.frequency); } catch (e) {}
 
         o1.start(t);
         if (o2) { o2.start(t); }
+        if (o3) { o3.start(t); }
         if (sub) { sub.start(t); }
         if (noiseSrc) { noiseSrc.start(t); }
 
@@ -1708,6 +1880,7 @@
           try {
             v.o1.detune.setTargetAtTime(bendCents, t, 0.012);
             if (v.o2) { v.o2.detune.setTargetAtTime(state.detune + bendCents, t, 0.012); }
+            if (v.o3) { v.o3.detune.setTargetAtTime(state.osc3Detune + bendCents, t, 0.012); }
             if (v.sub) { v.sub.detune.setTargetAtTime(bendCents, t, 0.012); }
           } catch (e) {}
         });
@@ -1780,6 +1953,8 @@
       var els = {
         oscMix: $("oscMix"), detune: $("detune"), subLevel: $("subLevel"),
         pulseWidth: $("pulseWidth"), noiseLevel: $("noiseLevel"),
+        osc3Level: $("osc3Level"), osc3Detune: $("osc3Detune"), fmAmt: $("fmAmt"),
+        osc3Toggle: $("osc3Toggle"),
         attack: $("attack"), decay: $("decay"), sustain: $("sustain"), release: $("release"),
         cutoff: $("cutoff"), resonance: $("resonance"), keyTrack: $("keyTrack"),
         fEnvAmt: $("fEnvAmt"), fEnvAttack: $("fEnvAttack"), fEnvDecay: $("fEnvDecay"),
@@ -1800,6 +1975,9 @@
         $("subLevelVal").textContent = state.subLevel === 0 ? "off" : state.subLevel + "%";
         $("pulseWidthVal").textContent = state.pulseWidth + "%";
         $("noiseLevelVal").textContent = state.noiseLevel === 0 ? "off" : state.noiseLevel + "%";
+        $("osc3LevelVal").textContent = state.osc3Level === 0 ? "off" : state.osc3Level + "%";
+        $("osc3DetuneVal").textContent = (state.osc3Detune > 0 ? "+" : "") + state.osc3Detune + " cents";
+        $("fmAmtVal").textContent = state.fmAmt === 0 ? "off" : state.fmAmt + "%";
         $("attackVal").textContent = fmtSec(state.attack);
         $("decayVal").textContent = fmtSec(state.decay);
         $("sustainVal").textContent = state.sustain + "%";
@@ -1836,6 +2014,10 @@
         els.subLevel.value = state.subLevel;
         els.pulseWidth.value = state.pulseWidth;
         els.noiseLevel.value = state.noiseLevel;
+        els.osc3Level.value = state.osc3Level;
+        els.osc3Detune.value = state.osc3Detune;
+        els.fmAmt.value = state.fmAmt;
+        els.osc3Toggle.setAttribute("aria-checked", state.osc3On ? "true" : "false");
         els.attack.value = state.attack;
         els.decay.value = state.decay;
         els.sustain.value = state.sustain;
@@ -1865,6 +2047,8 @@
         els.arpToggle.setAttribute("aria-checked", state.arpOn ? "true" : "false");
         document.querySelectorAll("#waveRow .wave-btn").forEach(function (b) { b.classList.toggle("active", b.dataset.wave === state.wave); });
         document.querySelectorAll("#wave2Row .wave-btn").forEach(function (b) { b.classList.toggle("active", b.dataset.wave2 === state.wave2); });
+        document.querySelectorAll("#wave3Row .wave-btn").forEach(function (b) { b.classList.toggle("active", b.dataset.wave3 === state.wave3); });
+        document.querySelectorAll("#osc3OctRow .wave-btn").forEach(function (b) { b.classList.toggle("active", parseInt(b.dataset.osc3oct, 10) === state.osc3Oct); });
         document.querySelectorAll("#filterTypeRow .wave-btn").forEach(function (b) { b.classList.toggle("active", b.dataset.ftype === state.filterType); });
         document.querySelectorAll("#lfoTargetRow .wave-btn").forEach(function (b) { b.classList.toggle("active", b.dataset.ltarget === state.lfoTarget); });
         document.querySelectorAll("#arpPatternRow .wave-btn").forEach(function (b) {
@@ -1915,11 +2099,21 @@
           try {
             if (v.p1) { v.o1.setPeriodicWave(wave); }
             if (v.p2 && v.o2) { v.o2.setPeriodicWave(wave); }
+            if (v.p3 && v.o3) { v.o3.setPeriodicWave(wave); }
           } catch (e) {}
         });
       });
       bindSlider(els.noiseLevel, "noiseLevel", I, function () {
         active.forEach(function (v) { if (v.gNoise) { try { v.gNoise.gain.setTargetAtTime(noiseGainVal(), ctx.currentTime, 0.02); } catch (e) {} } });
+      });
+      bindSlider(els.osc3Level, "osc3Level", I, function () {
+        active.forEach(function (v) { if (v.g3) { try { v.g3.gain.setTargetAtTime(osc3GainVal(), ctx.currentTime, 0.02); } catch (e) {} } });
+      });
+      bindSlider(els.osc3Detune, "osc3Detune", I, function () {
+        active.forEach(function (v) { if (v.o3) { try { v.o3.detune.setTargetAtTime(state.osc3Detune + bendCents, ctx.currentTime, 0.02); } catch (e) {} } });
+      });
+      bindSlider(els.fmAmt, "fmAmt", I, function () {
+        active.forEach(function (v) { if (v.fmGain) { try { v.fmGain.gain.setTargetAtTime(fmDepthHz(midiFreq(v.midi)), ctx.currentTime, 0.02); } catch (e) {} } });
       });
       bindSlider(els.attack, "attack", F);
       bindSlider(els.decay, "decay", F);
@@ -1970,6 +2164,26 @@
           markCustom();
         });
       });
+      document.querySelectorAll("#wave3Row .wave-btn").forEach(function (b) {
+        b.addEventListener("click", function () {
+          ensureAudio();
+          state.wave3 = b.dataset.wave3;
+          active.forEach(function (v) {
+            if (v.o3) { applyWave(v.o3, state.wave3, state.pulseWidth); }
+            v.p3 = state.osc3On && state.wave3 === "square";
+          });
+          refreshControlUI();
+          markCustom();
+        });
+      });
+      document.querySelectorAll("#osc3OctRow .wave-btn").forEach(function (b) {
+        b.addEventListener("click", function () {
+          ensureAudio();
+          state.osc3Oct = parseInt(b.dataset.osc3oct, 10);
+          refreshControlUI();
+          markCustom();
+        });
+      });
       document.querySelectorAll("#filterTypeRow .wave-btn").forEach(function (b) {
         b.addEventListener("click", function () {
           ensureAudio();
@@ -1994,6 +2208,13 @@
         ensureAudio();
         state.detuneOn = !state.detuneOn;
         els.detuneToggle.setAttribute("aria-checked", state.detuneOn ? "true" : "false");
+        markCustom();
+      });
+
+      els.osc3Toggle.addEventListener("click", function () {
+        ensureAudio();
+        state.osc3On = !state.osc3On;
+        els.osc3Toggle.setAttribute("aria-checked", state.osc3On ? "true" : "false");
         markCustom();
       });
 
@@ -2051,6 +2272,12 @@
           detuneOn: Math.random() < 0.7,
           detune: rndi(-20, 20),
           oscMix: rndi(20, 80),
+          wave3: pick(["sine", "triangle", "square", "sawtooth"]),
+          osc3On: Math.random() < 0.45,
+          osc3Level: rndi(20, 70),
+          osc3Detune: rndi(-20, 20),
+          osc3Oct: pick([-1, 0, 0, 1]),
+          fmAmt: Math.random() < 0.55 ? 0 : rndi(5, 60),
           subLevel: Math.random() < 0.3 ? 0 : rndi(0, 40),
           pulseWidth: rndi(15, 85),
           noiseLevel: Math.random() < 0.5 ? 0 : rndi(0, 18),
