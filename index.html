@@ -214,6 +214,7 @@
       .key.white.on {
         background: linear-gradient(180deg, var(--white-key-on) 0%, #f0932f 100%);
         color: #5c3805;
+        box-shadow: inset 0 -8px 14px rgba(140, 70, 0, 0.35), inset 0 3px 6px rgba(120, 60, 0, 0.3), 0 0 16px rgba(246, 179, 82, 0.75);
       }
       .key.black {
         position: absolute;
@@ -226,7 +227,11 @@
         color: #cdb894;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.35);
       }
-      .key.black.on { background: linear-gradient(180deg, #f2a54a 0%, var(--black-key-on) 100%); color: #fff3df; }
+      .key.black.on {
+        background: linear-gradient(180deg, #f2a54a 0%, var(--black-key-on) 100%);
+        color: #fff3df;
+        box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4), 0 0 14px rgba(246, 179, 82, 0.8);
+      }
       .key .note-name {
         position: absolute;
         bottom: 8px;
@@ -432,6 +437,96 @@
       .switch[aria-checked="true"] { background: var(--accent); border-color: var(--accent-deep); }
       .switch[aria-checked="true"]::after { left: 29px; }
       .volume-card { grid-column: 1 / -1; }
+      /* ---------- Rotary knobs (v4 hardware panel) ---------- */
+      .knob-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(88px, 1fr));
+        gap: 14px 6px;
+        justify-items: center;
+        padding: 8px 0 4px;
+      }
+      .knob-cell { display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0; }
+      .knob {
+        position: relative;
+        width: 82px;
+        height: 82px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 34% 30%, #5a4a36 0%, #33281c 55%, #1d150e 100%);
+        border: 2px solid #14100b;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4), inset 0 2px 3px rgba(255, 240, 210, 0.25), inset 0 -4px 8px rgba(0, 0, 0, 0.55);
+        cursor: ns-resize;
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+        outline: none;
+      }
+      .knob.knob-lg { width: 96px; height: 96px; }
+      .knob:focus-visible { box-shadow: 0 0 0 3px var(--accent), 0 5px 10px rgba(0, 0, 0, 0.4); }
+      .knob:active { box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45), inset 0 2px 3px rgba(255, 240, 210, 0.25), inset 0 -4px 8px rgba(0, 0, 0, 0.55); }
+      .knob-rotor {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        pointer-events: none;
+      }
+      .knob-line {
+        position: absolute;
+        left: 50%;
+        top: 7%;
+        width: 5px;
+        height: 34%;
+        margin-left: -2.5px;
+        border-radius: 3px;
+        background: var(--accent);
+        box-shadow: 0 0 6px rgba(246, 179, 82, 0.8);
+      }
+      .knob-rotor::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 34%;
+        height: 34%;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        background: radial-gradient(circle at 36% 32%, #6b5840 0%, #3a2d1f 70%, #241a10 100%);
+        box-shadow: inset 0 1px 2px rgba(255, 240, 210, 0.3), 0 1px 3px rgba(0, 0, 0, 0.5);
+      }
+      .knob-ticks {
+        position: absolute;
+        inset: -9px;
+        border-radius: 50%;
+        pointer-events: none;
+        background: repeating-conic-gradient(from -135deg, var(--ink-soft) 0deg 1.6deg, transparent 1.6deg 27deg);
+        -webkit-mask: radial-gradient(circle, transparent 58%, #000 59%, #000 66%, transparent 67%);
+        mask: radial-gradient(circle, transparent 58%, #000 59%, #000 66%, transparent 67%);
+        opacity: 0.5;
+      }
+      .knob-name {
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--ink-soft);
+        text-align: center;
+        line-height: 1.15;
+      }
+      .knob-val {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--accent-deep);
+        font-variant-numeric: tabular-nums;
+        text-align: center;
+        min-height: 18px;
+        line-height: 1.2;
+      }
+      .knob-src { display: none !important; }
+      .knob-hint { font-size: 12px; color: var(--ink-soft); text-align: center; margin: 2px 0 0; }
+      @media (max-width: 560px) {
+        .knob { width: 74px; height: 74px; }
+        .knob.knob-lg { width: 86px; height: 86px; }
+      }
       .fine-print {
         text-align: center;
         color: var(--ink-soft);
@@ -462,6 +557,11 @@
           <label for="presetSelect">Preset</label>
           <select id="presetSelect" aria-label="Choose a preset">
             <option value="custom">Custom —</option>
+            <optgroup label="Worship">
+              <option value="grandorgan">Grand Cathedral Organ</option>
+              <option value="worshippad">Soft Worship Pad</option>
+              <option value="bellchoir">Bell Choir</option>
+            </optgroup>
             <optgroup label="Keys &amp; Bells">
               <option value="epiano">Electric Piano</option>
               <option value="organ">Church Organ</option>
@@ -471,6 +571,7 @@
               <option value="bell">Cathedral Bell</option>
               <option value="kalimba">Kalimba</option>
               <option value="lofi">Lo-Fi Keys</option>
+              <option value="softgrand">Soft Grand</option>
             </optgroup>
             <optgroup label="Pads">
               <option value="pad">Soft Pad</option>
@@ -482,6 +583,8 @@
               <option value="cathedral">Cathedral Shimmer</option>
               <option value="glass">Glass Pad</option>
               <option value="cosmic">Cosmic Sweep</option>
+              <option value="aurora">Aurora Drift</option>
+              <option value="deepdrone">Deep Drone</option>
             </optgroup>
             <optgroup label="Leads">
               <option value="lead">Bright Lead</option>
@@ -489,6 +592,7 @@
               <option value="brass">Saw Brass</option>
               <option value="flute">Breathy Flute</option>
               <option value="analogbrass">Analog Brass</option>
+              <option value="theremin">Theremin Lead</option>
             </optgroup>
             <optgroup label="Bass">
               <option value="bass">Deep Bass</option>
@@ -497,6 +601,7 @@
               <option value="upright">Upright Pluck</option>
               <option value="squelch">Squelch Bass</option>
               <option value="subrunner">Sub Runner</option>
+              <option value="roundbass">Round Bass</option>
             </optgroup>
             <optgroup label="Plucks &amp; Fun">
               <option value="marimba">Marimba</option>
@@ -530,8 +635,8 @@
       </section>
 
       <div class="controls">
-        <section class="card" aria-label="Sound sources">
-          <h2>Sound Sources</h2>
+        <section class="card" aria-label="Oscillators">
+          <h2>Oscillators</h2>
           <p class="row-label">Oscillator 1</p>
           <div class="wave-row" id="waveRow">
             <button type="button" class="wave-btn" data-wave="sine">Sine</button>
@@ -555,11 +660,15 @@
             <input type="range" id="oscMix" min="0" max="100" step="1" value="50" />
             <span class="val" id="oscMixVal"></span>
           </div>
-          <div class="slider-row">
-            <label for="detune">Detune</label>
-            <input type="range" id="detune" min="-50" max="50" step="1" value="6" />
-            <span class="val" id="detuneVal"></span>
+          <div class="knob-grid" style="grid-template-columns: repeat(auto-fit, minmax(88px, 120px)); justify-content: start;">
+            <div class="knob-cell">
+              <div class="knob" data-target="detune" role="slider" tabindex="0" aria-label="Oscillator detune, drag up or down to turn"></div>
+              <div class="knob-name">Detune</div>
+              <div class="knob-val" id="detuneVal"></div>
+              <input type="range" id="detune" class="knob-src" min="-50" max="50" step="1" value="6" tabindex="-1" aria-hidden="true" />
+            </div>
           </div>
+          <p class="knob-hint">Drag a knob up or down to turn it — arrow keys work too.</p>
           <div class="slider-row">
             <label for="subLevel">Sub-osc</label>
             <input type="range" id="subLevel" min="0" max="100" step="1" value="0" />
@@ -579,25 +688,31 @@
 
         <section class="card" aria-label="Envelope">
           <h2>Envelope</h2>
-          <div class="slider-row">
-            <label for="attack">Attack</label>
-            <input type="range" id="attack" min="0" max="1.5" step="0.01" value="0.02" />
-            <span class="val" id="attackVal"></span>
-          </div>
-          <div class="slider-row">
-            <label for="decay">Decay</label>
-            <input type="range" id="decay" min="0" max="1.5" step="0.01" value="0.3" />
-            <span class="val" id="decayVal"></span>
-          </div>
-          <div class="slider-row">
-            <label for="sustain">Sustain</label>
-            <input type="range" id="sustain" min="0" max="100" step="1" value="62" />
-            <span class="val" id="sustainVal"></span>
-          </div>
-          <div class="slider-row">
-            <label for="release">Release</label>
-            <input type="range" id="release" min="0.02" max="3" step="0.01" value="0.45" />
-            <span class="val" id="releaseVal"></span>
+          <div class="knob-grid">
+            <div class="knob-cell">
+              <div class="knob" data-target="attack" role="slider" tabindex="0" aria-label="Envelope attack, drag up or down to turn"></div>
+              <div class="knob-name">Attack</div>
+              <div class="knob-val" id="attackVal"></div>
+              <input type="range" id="attack" class="knob-src" min="0" max="1.5" step="0.01" value="0.02" tabindex="-1" aria-hidden="true" />
+            </div>
+            <div class="knob-cell">
+              <div class="knob" data-target="decay" role="slider" tabindex="0" aria-label="Envelope decay, drag up or down to turn"></div>
+              <div class="knob-name">Decay</div>
+              <div class="knob-val" id="decayVal"></div>
+              <input type="range" id="decay" class="knob-src" min="0" max="1.5" step="0.01" value="0.3" tabindex="-1" aria-hidden="true" />
+            </div>
+            <div class="knob-cell">
+              <div class="knob" data-target="sustain" role="slider" tabindex="0" aria-label="Envelope sustain, drag up or down to turn"></div>
+              <div class="knob-name">Sustain</div>
+              <div class="knob-val" id="sustainVal"></div>
+              <input type="range" id="sustain" class="knob-src" min="0" max="100" step="1" value="62" tabindex="-1" aria-hidden="true" />
+            </div>
+            <div class="knob-cell">
+              <div class="knob" data-target="release" role="slider" tabindex="0" aria-label="Envelope release, drag up or down to turn"></div>
+              <div class="knob-name">Release</div>
+              <div class="knob-val" id="releaseVal"></div>
+              <input type="range" id="release" class="knob-src" min="0.02" max="3" step="0.01" value="0.45" tabindex="-1" aria-hidden="true" />
+            </div>
           </div>
         </section>
 
@@ -608,15 +723,19 @@
             <button type="button" class="wave-btn" data-ftype="bandpass">Band-pass</button>
             <button type="button" class="wave-btn" data-ftype="highpass">High-pass</button>
           </div>
-          <div class="slider-row">
-            <label for="cutoff">Cutoff</label>
-            <input type="range" id="cutoff" min="0" max="1000" step="1" value="620" />
-            <span class="val" id="cutoffVal"></span>
-          </div>
-          <div class="slider-row">
-            <label for="resonance">Resonance</label>
-            <input type="range" id="resonance" min="0" max="20" step="0.1" value="1" />
-            <span class="val" id="resonanceVal"></span>
+          <div class="knob-grid" style="grid-template-columns: repeat(auto-fit, minmax(100px, 130px)); justify-content: start;">
+            <div class="knob-cell">
+              <div class="knob knob-lg" data-target="cutoff" role="slider" tabindex="0" aria-label="Filter cutoff, drag up or down to turn"></div>
+              <div class="knob-name">Cutoff</div>
+              <div class="knob-val" id="cutoffVal"></div>
+              <input type="range" id="cutoff" class="knob-src" min="0" max="1000" step="1" value="620" tabindex="-1" aria-hidden="true" />
+            </div>
+            <div class="knob-cell">
+              <div class="knob knob-lg" data-target="resonance" role="slider" tabindex="0" aria-label="Filter resonance, drag up or down to turn"></div>
+              <div class="knob-name">Resonance</div>
+              <div class="knob-val" id="resonanceVal"></div>
+              <input type="range" id="resonance" class="knob-src" min="0" max="20" step="0.1" value="1" tabindex="-1" aria-hidden="true" />
+            </div>
           </div>
           <div class="slider-row">
             <label for="keyTrack">Key tracking</label>
@@ -640,23 +759,33 @@
           </div>
         </section>
 
-        <section class="card" aria-label="Modulation">
-          <h2>Modulation</h2>
+        <section class="card" aria-label="LFO and modulation">
+          <h2>LFO</h2>
           <p class="row-label">LFO 1 target</p>
           <div class="wave-row" id="lfoTargetRow">
             <button type="button" class="wave-btn" data-ltarget="pitch">Pitch</button>
             <button type="button" class="wave-btn" data-ltarget="filter">Filter</button>
             <button type="button" class="wave-btn" data-ltarget="amp">Amp</button>
           </div>
-          <div class="slider-row">
-            <label for="lfoRate">LFO 1 rate</label>
-            <input type="range" id="lfoRate" min="0" max="12" step="0.1" value="5" />
-            <span class="val" id="lfoRateVal"></span>
-          </div>
-          <div class="slider-row">
-            <label for="lfoDepth">LFO 1 depth</label>
-            <input type="range" id="lfoDepth" min="0" max="50" step="1" value="4" />
-            <span class="val" id="lfoDepthVal"></span>
+          <div class="knob-grid">
+            <div class="knob-cell">
+              <div class="knob" data-target="lfoRate" role="slider" tabindex="0" aria-label="LFO rate, drag up or down to turn"></div>
+              <div class="knob-name">Rate</div>
+              <div class="knob-val" id="lfoRateVal"></div>
+              <input type="range" id="lfoRate" class="knob-src" min="0" max="12" step="0.1" value="5" tabindex="-1" aria-hidden="true" />
+            </div>
+            <div class="knob-cell">
+              <div class="knob" data-target="lfoDepth" role="slider" tabindex="0" aria-label="LFO depth, drag up or down to turn"></div>
+              <div class="knob-name">Depth</div>
+              <div class="knob-val" id="lfoDepthVal"></div>
+              <input type="range" id="lfoDepth" class="knob-src" min="0" max="50" step="1" value="4" tabindex="-1" aria-hidden="true" />
+            </div>
+            <div class="knob-cell">
+              <div class="knob" data-target="glide" role="slider" tabindex="0" aria-label="Glide or portamento, drag up or down to turn"></div>
+              <div class="knob-name">Glide</div>
+              <div class="knob-val" id="glideVal"></div>
+              <input type="range" id="glide" class="knob-src" min="0" max="0.5" step="0.005" value="0" tabindex="-1" aria-hidden="true" />
+            </div>
           </div>
           <div class="slider-row">
             <label for="lfo2Rate">LFO 2 rate</label>
@@ -667,11 +796,6 @@
             <label for="lfo2Depth">LFO 2 depth</label>
             <input type="range" id="lfo2Depth" min="0" max="100" step="1" value="0" />
             <span class="val" id="lfo2DepthVal"></span>
-          </div>
-          <div class="slider-row">
-            <label for="glide">Glide</label>
-            <input type="range" id="glide" min="0" max="0.5" step="0.005" value="0" />
-            <span class="val" id="glideVal"></span>
           </div>
         </section>
 
@@ -818,7 +942,16 @@
         glass: P({ wave: "sine", wave2: "triangle", detuneOn: true, detune: 9, oscMix: 40, attack: 1.4, decay: 1.2, sustain: 75, release: 2.8, filterType: "bandpass", cutoffHz: 1800, resonance: 3.5, keyTrack: 50, lfoRate: 0.4, lfoDepth: 3, lfo2Rate: 0.15, lfo2Depth: 40, echoTime: 0.4, echoMix: 24, reverbSize: 70, reverbMix: 38, chorusDepth: 40, chorusMix: 25, volume: 70 }),
         berlin: P({ wave: "square", wave2: "square", detuneOn: false, detune: 0, pulseWidth: 32, attack: 0.003, decay: 0.18, sustain: 8, release: 0.09, cutoffHz: 2600, resonance: 4, fEnvAmt: 45, fEnvAttack: 0.003, fEnvDecay: 0.16, keyTrack: 30, glide: 0.02, lfoRate: 0, lfoDepth: 0, echoTime: 0.19, echoMix: 22, volume: 70 }),
         cosmic: P({ wave: "sawtooth", wave2: "sawtooth", detuneOn: true, detune: 12, oscMix: 50, attack: 1.6, decay: 1.4, sustain: 85, release: 3.0, cutoffHz: 900, resonance: 6, lfoRate: 0.3, lfoDepth: 3, lfo2Rate: 0.08, lfo2Depth: 85, echoTime: 0.5, echoMix: 20, reverbSize: 60, reverbMix: 30, volume: 70 }),
-        subrunner: P({ wave: "triangle", wave2: "triangle", detuneOn: false, detune: 0, subLevel: 70, attack: 0.005, decay: 0.3, sustain: 60, release: 0.14, cutoffHz: 500, resonance: 2, fEnvAmt: 30, fEnvAttack: 0.005, fEnvDecay: 0.25, keyTrack: 35, glide: 0.06, drive: 12, lfoRate: 0, lfoDepth: 0, echoTime: 0.2, echoMix: 0, volume: 82 })
+        subrunner: P({ wave: "triangle", wave2: "triangle", detuneOn: false, detune: 0, subLevel: 70, attack: 0.005, decay: 0.3, sustain: 60, release: 0.14, cutoffHz: 500, resonance: 2, fEnvAmt: 30, fEnvAttack: 0.005, fEnvDecay: 0.25, keyTrack: 35, glide: 0.06, drive: 12, lfoRate: 0, lfoDepth: 0, echoTime: 0.2, echoMix: 0, volume: 82 }),
+        /* ---- v4 expansion: worship, keys, ambient, leads, bass (40 total) ---- */
+        grandorgan: P({ wave: "square", wave2: "square", detuneOn: true, detune: 4, oscMix: 50, subLevel: 32, attack: 0.03, decay: 0.08, sustain: 100, release: 0.28, cutoffHz: 5200, resonance: 0.7, keyTrack: 15, lfoRate: 0, lfoDepth: 0, echoTime: 0.32, echoMix: 12, reverbSize: 82, reverbMix: 34, chorusRate: 0.5, chorusDepth: 25, chorusMix: 12, volume: 64 }),
+        worshippad: P({ wave: "triangle", wave2: "triangle", detuneOn: true, detune: 11, oscMix: 50, attack: 1.3, decay: 1.1, sustain: 82, release: 2.4, cutoffHz: 950, resonance: 0.6, lfoRate: 0.35, lfoDepth: 3, lfo2Rate: 0.18, lfo2Depth: 30, echoTime: 0.4, echoMix: 22, reverbSize: 65, reverbMix: 36, chorusRate: 0.5, chorusDepth: 40, chorusMix: 26, volume: 72 }),
+        bellchoir: P({ wave: "sine", wave2: "sine", detuneOn: true, detune: 7, oscMix: 45, attack: 0.003, decay: 1.1, sustain: 5, release: 1.8, cutoffHz: 9000, resonance: 1, keyTrack: 30, lfoRate: 0, lfoDepth: 0, echoTime: 0.36, echoMix: 28, reverbSize: 75, reverbMix: 40, volume: 70 }),
+        softgrand: P({ wave: "triangle", wave2: "sine", detuneOn: true, detune: 5, oscMix: 35, attack: 0.003, decay: 1.3, sustain: 18, release: 0.9, cutoffHz: 3400, resonance: 0.9, keyTrack: 25, lfoRate: 0, lfoDepth: 0, echoTime: 0.22, echoMix: 10, reverbSize: 42, reverbMix: 18, volume: 72 }),
+        aurora: P({ wave: "sawtooth", wave2: "triangle", detuneOn: true, detune: 13, oscMix: 50, attack: 1.5, decay: 1.4, sustain: 85, release: 3.0, cutoffHz: 750, resonance: 3, lfoTarget: "filter", lfoRate: 0.22, lfoDepth: 20, lfo2Rate: 0.1, lfo2Depth: 60, echoTime: 0.48, echoMix: 24, reverbSize: 70, reverbMix: 34, chorusRate: 0.4, chorusDepth: 35, chorusMix: 20, volume: 70 }),
+        deepdrone: P({ wave: "sine", wave2: "triangle", detuneOn: true, detune: 6, oscMix: 40, subLevel: 45, attack: 1.5, decay: 1.2, sustain: 90, release: 3.0, cutoffHz: 420, resonance: 1.2, lfoRate: 0.12, lfoDepth: 2, lfo2Rate: 0.07, lfo2Depth: 45, glide: 0.12, echoTime: 0.5, echoMix: 16, reverbSize: 78, reverbMix: 30, volume: 74 }),
+        theremin: P({ wave: "sine", wave2: "sine", detuneOn: false, detune: 0, attack: 0.09, decay: 0.2, sustain: 90, release: 0.3, cutoffHz: 2800, resonance: 0.8, lfoRate: 5.8, lfoDepth: 9, glide: 0.18, echoTime: 0.3, echoMix: 20, reverbSize: 45, reverbMix: 22, volume: 70 }),
+        roundbass: P({ wave: "triangle", wave2: "sine", detuneOn: true, detune: 3, oscMix: 30, subLevel: 35, attack: 0.005, decay: 0.35, sustain: 55, release: 0.16, cutoffHz: 640, resonance: 3, fEnvAmt: 35, fEnvAttack: 0.005, fEnvDecay: 0.3, keyTrack: 30, drive: 8, lfoRate: 0, lfoDepth: 0, echoTime: 0.18, echoMix: 0, volume: 80 })
       };
 
       /* ================= Audio graph ================= */
@@ -1382,7 +1515,7 @@
       var baseOctave = 4; // leftmost C on screen; the range can reach C1 .. C8
       var MIN_OCT = 1, TOP_OCT = 8;
       var wideMq = window.matchMedia("(min-width: 721px)");
-      function visibleOctaves() { return wideMq.matches ? 3 : 2; }
+      function visibleOctaves() { return 3; } // v4: three full octaves on screen at every width
       function maxBaseOctave() { return TOP_OCT - visibleOctaves(); }
       function octaveOffsets() {
         var whites = [], blacks = [], o, i;
@@ -1738,6 +1871,7 @@
           b.classList.toggle("active", b.dataset.arpPattern === state.arpPattern);
         });
         refreshLabels();
+        syncAllKnobs();
       }
 
       // Any hand adjustment after choosing a preset makes the patch custom —
@@ -1963,6 +2097,97 @@
 
       /* Start audio on the first touch of any control, per autoplay rules. */
       document.addEventListener("pointerdown", ensureAudio, { once: false });
+
+      /* ================= Rotary knobs (v4) =================
+         Each knob drives its hidden range input, so every existing binding,
+         preset, dice roll and live-audio update flows through unchanged.
+         Drag vertically (mouse or touch) to turn; wheel and arrow keys too. */
+      function knobFraction(input) {
+        var min = parseFloat(input.min), max = parseFloat(input.max), v = parseFloat(input.value);
+        if (!(max > min)) { return 0; }
+        return Math.min(1, Math.max(0, (v - min) / (max - min)));
+      }
+      function syncKnob(knob) {
+        var input = document.getElementById(knob.getAttribute("data-target"));
+        if (!input) { return; }
+        var f = knobFraction(input);
+        var rotor = knob.querySelector(".knob-rotor");
+        if (rotor) { rotor.style.transform = "rotate(" + (-135 + f * 270) + "deg)"; }
+        knob.setAttribute("aria-valuemin", input.min);
+        knob.setAttribute("aria-valuemax", input.max);
+        knob.setAttribute("aria-valuenow", input.value);
+        var valEl = document.getElementById(knob.getAttribute("data-target") + "Val");
+        if (valEl) { knob.setAttribute("aria-valuetext", valEl.textContent); }
+      }
+      function syncAllKnobs() {
+        document.querySelectorAll(".knob").forEach(function (k) { syncKnob(k); });
+      }
+      function setKnobFraction(knob, f) {
+        var input = document.getElementById(knob.getAttribute("data-target"));
+        if (!input) { return; }
+        f = Math.min(1, Math.max(0, f));
+        var min = parseFloat(input.min), max = parseFloat(input.max);
+        var step = parseFloat(input.step) || 1;
+        var v = min + f * (max - min);
+        v = Math.round(v / step) * step;
+        v = Math.round(v * 1000) / 1000;
+        if (parseFloat(input.value) !== v) {
+          input.value = v;
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+        syncKnob(knob);
+      }
+      document.querySelectorAll(".knob").forEach(function (knob) {
+        var ticks = document.createElement("span");
+        ticks.className = "knob-ticks";
+        knob.appendChild(ticks);
+        var rotor = document.createElement("span");
+        rotor.className = "knob-rotor";
+        var line = document.createElement("span");
+        line.className = "knob-line";
+        rotor.appendChild(line);
+        knob.appendChild(rotor);
+        var input = document.getElementById(knob.getAttribute("data-target"));
+        if (!input) { return; }
+        input.addEventListener("input", function () { syncKnob(knob); });
+        knob.addEventListener("pointerdown", function (e) {
+          e.preventDefault();
+          ensureAudio();
+          try { knob.focus({ preventScroll: true }); } catch (err) { knob.focus(); }
+          var startY = e.clientY;
+          var startF = knobFraction(input);
+          try { knob.setPointerCapture(e.pointerId); } catch (err) {}
+          var move = function (ev) {
+            // Full travel in ~170 px of vertical drag; Shift = fine trim.
+            var range = ev.shiftKey ? 680 : 170;
+            setKnobFraction(knob, startF + (startY - ev.clientY) / range);
+          };
+          var up = function () {
+            knob.removeEventListener("pointermove", move);
+            knob.removeEventListener("pointerup", up);
+            knob.removeEventListener("pointercancel", up);
+          };
+          knob.addEventListener("pointermove", move);
+          knob.addEventListener("pointerup", up);
+          knob.addEventListener("pointercancel", up);
+        });
+        knob.addEventListener("wheel", function (e) {
+          e.preventDefault();
+          ensureAudio();
+          setKnobFraction(knob, knobFraction(input) + (e.deltaY < 0 ? 0.05 : -0.05));
+        }, { passive: false });
+        knob.addEventListener("keydown", function (e) {
+          var min = parseFloat(input.min), max = parseFloat(input.max);
+          var stepF = (parseFloat(input.step) || 1) / (max - min);
+          if (e.key === "ArrowUp" || e.key === "ArrowRight") { e.preventDefault(); ensureAudio(); setKnobFraction(knob, knobFraction(input) + stepF); }
+          else if (e.key === "ArrowDown" || e.key === "ArrowLeft") { e.preventDefault(); ensureAudio(); setKnobFraction(knob, knobFraction(input) - stepF); }
+          else if (e.key === "Home") { e.preventDefault(); setKnobFraction(knob, 0); }
+          else if (e.key === "End") { e.preventDefault(); setKnobFraction(knob, 1); }
+          else if (e.key === "PageUp") { e.preventDefault(); setKnobFraction(knob, knobFraction(input) + 0.1); }
+          else if (e.key === "PageDown") { e.preventDefault(); setKnobFraction(knob, knobFraction(input) - 0.1); }
+        });
+        syncKnob(knob);
+      });
 
       buildKeyboard();
       refreshControlUI();
