@@ -12,18 +12,18 @@
     <meta name="apple-mobile-web-app-title" content="Synthesizer" />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
     <link rel="icon" href="data:," />
-    <meta name="description" content="A playable keyboard synthesizer in your browser — three oscillators, real knobs, 68 presets, and a landscape performance mode where the keys fill the screen. Free for everyone." />
+    <meta name="description" content="A playable keyboard synthesizer in your browser — three oscillators, real knobs, 82 presets, and a landscape performance mode where the keys fill the screen. Free for everyone." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://jesuslovestyler.github.io/Synthesizer/" />
     <meta property="og:title" content="Synthesizer" />
-    <meta property="og:description" content="A playable keyboard synthesizer in your browser — three oscillators, real knobs, 68 presets, and a landscape performance mode where the keys fill the screen. Free for everyone." />
+    <meta property="og:description" content="A playable keyboard synthesizer in your browser — three oscillators, real knobs, 82 presets, and a landscape performance mode where the keys fill the screen. Free for everyone." />
     <meta property="og:image" content="https://jesuslovestyler.github.io/Synthesizer/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:type" content="image/png" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Synthesizer" />
-    <meta name="twitter:description" content="A playable keyboard synthesizer in your browser — three oscillators, real knobs, 68 presets, and a landscape performance mode where the keys fill the screen. Free for everyone." />
+    <meta name="twitter:description" content="A playable keyboard synthesizer in your browser — three oscillators, real knobs, 82 presets, and a landscape performance mode where the keys fill the screen. Free for everyone." />
     <meta name="twitter:image" content="https://jesuslovestyler.github.io/Synthesizer/og-image.png" />
     <title>Synthesizer</title>
     <style>
@@ -66,6 +66,51 @@
           --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
         }
       }
+      /* ---------- Color themes (picker in the top bar) ----------
+         Each theme is a complete palette swapped over the same variables.
+         The html[data-theme] selector outranks both :root defaults, so a
+         theme holds in light and dark system modes alike. Parchment (the
+         original look) is the absence of the attribute. */
+      html[data-theme="midnight"] {
+        color-scheme: dark;
+        --bg: #0b1220; --bg-deep: #060a14; --card: #141f36; --card-edge: #2b3d63;
+        --ink: #e8eefc; --ink-soft: #9db1d8;
+        --accent: #f0a13a; --accent-deep: #ffc06b; --accent-soft: #3a2c12;
+        --track: #26355a; --kb-back: #1c2a4a;
+        --white-key: #e9edf7; --white-key-edge: #a9b6d4; --white-key-on: #f6b352;
+        --black-key: #0a0f1e; --black-key-on: #e07f22;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      }
+      html[data-theme="forest"] {
+        color-scheme: dark;
+        --bg: #0e1a12; --bg-deep: #081209; --card: #18301f; --card-edge: #2f5238;
+        --ink: #e9f4e4; --ink-soft: #a9c4a4;
+        --accent: #8fce5e; --accent-deep: #b5e48f; --accent-soft: #24401c;
+        --track: #2b4a33; --kb-back: #274435;
+        --white-key: #f2f4e6; --white-key-edge: #b3c2a4; --white-key-on: #a5dd7e;
+        --black-key: #0b140d; --black-key-on: #7cb84a;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      }
+      html[data-theme="burgundy"] {
+        color-scheme: dark;
+        --bg: #241019; --bg-deep: #180a10; --card: #371826; --card-edge: #5b2a42;
+        --ink: #f8ebf0; --ink-soft: #d2a3ba;
+        --accent: #e8b34b; --accent-deep: #ffd07a; --accent-soft: #4a2436;
+        --track: #4e2438; --kb-back: #4a2438;
+        --white-key: #f7efe9; --white-key-edge: #c9a9a0; --white-key-on: #f6b352;
+        --black-key: #170910; --black-key-on: #d96f8e;
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      }
+      html[data-theme="slate"] {
+        color-scheme: light;
+        --bg: #eceff3; --bg-deep: #dde3ea; --card: #ffffff; --card-edge: #c3ccd8;
+        --ink: #22303f; --ink-soft: #5d7186;
+        --accent: #d96f1e; --accent-deep: #b8560d; --accent-soft: #fbe3c8;
+        --track: #c9d3df; --kb-back: #7d8ea3;
+        --white-key: #ffffff; --white-key-edge: #b9c4d2; --white-key-on: #f6b352;
+        --black-key: #232c36; --black-key-on: #d96f1e;
+        --shadow: 0 10px 30px rgba(50, 70, 95, 0.16);
+      }
       * { box-sizing: border-box; }
       html, body { margin: 0; padding: 0; overscroll-behavior: none; }
       body {
@@ -102,6 +147,21 @@
         box-shadow: var(--shadow);
       }
       .home-pill:active { transform: translateY(1px); }
+      .theme-box { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+      .theme-box label { font-weight: 700; font-size: 14.5px; }
+      #themeSelect {
+        min-height: 40px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--card-edge);
+        background: var(--card);
+        color: var(--ink);
+        font: inherit;
+        font-weight: 600;
+        font-size: 14.5px;
+        cursor: pointer;
+        box-shadow: var(--shadow);
+      }
       header { text-align: center; padding: 6px 6px 2px; }
       h1 {
         font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
@@ -577,10 +637,16 @@
       }
       /* ---------- Landscape performance mode (phone turned sideways) ----------
          Controls ride up top in a horizontally scrolling strip; the keyboard
-         fills every remaining pixel of the screen like a real synth app. */
+         fills every remaining pixel of the screen like a real synth app.
+         Sizes here come from the sizing script at the top of <body>: it
+         measures the real visible viewport in plain pixels (--app-h,
+         --strip-h, --kb-h) and only re-measures when the width or
+         orientation truly changes, so Safari's collapsing bars can never
+         resize the layout mid-play. No dvh units: they did not hold. */
       @media (orientation: landscape) and (max-height: 600px) {
-        html, body { height: 100%; }
+        html { height: 100%; }
         body {
+          height: var(--app-h, 100%);
           overflow: hidden;
           /* Pin the app shell to the viewport: in performance mode the page
              itself can never scroll, pan or rubber-band, so the keybed and
@@ -592,8 +658,7 @@
         }
         .wrap {
           max-width: none;
-          height: 100vh;
-          height: 100dvh;
+          height: var(--app-h, 100vh);
           padding: 6px 8px 8px;
           display: flex;
           flex-direction: column;
@@ -601,6 +666,9 @@
         }
         .topbar { order: 0; flex: 0 0 auto; padding: 0; }
         .home-pill { min-height: 28px; padding: 3px 12px; font-size: 13px; box-shadow: none; }
+        .theme-box { gap: 5px; }
+        .theme-box label { display: none; }
+        #themeSelect { min-height: 28px; padding: 2px 8px; font-size: 13px; box-shadow: none; }
         header { display: none; }
         section[aria-label="Presets"] { order: 1; flex: 0 0 auto; margin-top: 0; padding: 4px 8px; }
         section[aria-label="Presets"] h2 { display: none; }
@@ -611,9 +679,11 @@
         .controls {
           order: 2;
           flex: 0 0 auto;
-          /* Hard height cap: the strip can never again grow over the keys.
-             Cards scroll internally; the strip itself only scrolls sideways. */
-          height: clamp(104px, 31dvh, 150px);
+          /* Hard pixel cap set by the sizing script (at most ~31% of the
+             measured screen height, never more than 150px): the strip can
+             never again grow over the keys. Cards scroll internally; the
+             strip itself only scrolls sideways. */
+          height: var(--strip-h, 150px);
           display: flex;
           flex-direction: row;
           overflow-x: auto;
@@ -657,7 +727,11 @@
         input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; }
         section[aria-label="Keyboard"] {
           order: 3;
-          flex: 1 1 auto;
+          flex: 0 0 auto;
+          /* The sizing script hands this section the entire measured
+             remainder of the screen, in pixels, so the full keys and the
+             bend strip are always completely on screen. */
+          height: var(--kb-h, auto);
           min-height: 0;
           margin-top: 0;
           padding: 6px 8px 8px;
@@ -671,9 +745,10 @@
         .range-sub { display: none; }
         .now-playing { font-size: 13px; min-height: 0; }
         .kb-flex { flex: 1 1 auto; min-height: 0; gap: 8px; }
-        /* The keybed owns whatever height is left and never renders thinner
-           than a playable strip, whatever the strip above it is doing. */
-        .keyboard { flex: 1 1 auto; height: auto; min-height: 110px; }
+        /* The keybed owns the height its section was given; the floor below
+           is only a degenerate-case guard, well under what the script
+           guarantees, so it can never push the section off-screen. */
+        .keyboard { flex: 1 1 auto; height: auto; min-height: 80px; }
         .bend { flex-basis: 60px; }
         .bend-thumb { height: 68px; left: 4px; right: 4px; }
         .bend-label { font-size: 8.5px; bottom: 4px; }
@@ -682,9 +757,78 @@
     </style>
   </head>
   <body>
+    <script>
+      /* Landscape size lock: measure the real visible screen once, in plain
+         pixels, and hand the landscape layout its heights as CSS variables.
+         CSS-only sizing (dvh) did not hold on iPhone Safari — the bars
+         collapse and the layout kept resizing while the phone moved. So:
+         re-measure ONLY when the width or orientation actually changes,
+         never in response to height-only changes from Safari's bars. */
+      (function () {
+        "use strict";
+        var root = document.documentElement;
+        var lastW = -1;
+        var lastLandscape = null;
+
+        function measure() {
+          var vv = window.visualViewport;
+          if (vv) { return { w: vv.width, h: vv.height }; }
+          return { w: window.innerWidth, h: window.innerHeight };
+        }
+
+        function apply() {
+          var m = measure();
+          var landscape = m.w > m.h;
+          // The width gate: a height-only change is Safari's bars
+          // collapsing or returning — ignore it, so the layout cannot flap.
+          if (m.w === lastW && landscape === lastLandscape) { return; }
+          lastW = m.w;
+          lastLandscape = landscape;
+
+          var appH = Math.round(m.h);
+          root.style.setProperty("--app-h", appH + "px");
+          if (!landscape) { return; }
+
+          // Fixed pixel budget for the rows above the keyboard, matching
+          // the landscape CSS: wrap padding 6+8, home-pill row, preset bar,
+          // and the three 6px flex gaps.
+          var wrapPad = 14, topbarH = 34, presetH = 46, gaps = 18;
+          // The control strip: at most ~31% of the measured height, and
+          // never more than 150px. The keyboard section gets the entire
+          // remainder, so keys and bend strip are always fully on screen.
+          var stripH = Math.min(Math.round(appH * 0.31), 150);
+          var kbH = appH - wrapPad - topbarH - presetH - gaps - stripH;
+          root.style.setProperty("--strip-h", stripH + "px");
+          root.style.setProperty("--kb-h", kbH + "px");
+        }
+
+        apply();
+        window.addEventListener("resize", apply);
+        window.addEventListener("orientationchange", function () {
+          // iOS reports stale sizes during the turn itself; re-measure
+          // just after it settles (the width gate lets the real change
+          // through and still ignores everything else).
+          setTimeout(apply, 60);
+          setTimeout(apply, 350);
+        });
+        if (window.visualViewport) {
+          window.visualViewport.addEventListener("resize", apply);
+        }
+      })();
+    </script>
     <div class="wrap">
       <div class="topbar">
         <a class="home-pill" href="https://jesuslovestyler.com/">⌂ Home</a>
+        <div class="theme-box">
+          <label for="themeSelect">Theme</label>
+          <select id="themeSelect" aria-label="Choose a color theme">
+            <option value="parchment">Parchment</option>
+            <option value="midnight">Midnight</option>
+            <option value="forest">Forest</option>
+            <option value="burgundy">Burgundy</option>
+            <option value="slate">Slate</option>
+          </select>
+        </div>
       </div>
 
       <header>
@@ -705,6 +849,9 @@
               <option value="bellchoir">Bell Choir</option>
               <option value="heavenchoir">Heavenly Choir Pad</option>
               <option value="prayerbells">Prayer Bells</option>
+              <option value="quadorgan">Quad Stack Organ</option>
+              <option value="ringchoir">Ringing Choir</option>
+              <option value="templebells">Temple Ring Bells</option>
             </optgroup>
             <optgroup label="Keys &amp; Bells">
               <option value="epiano">Electric Piano</option>
@@ -721,6 +868,8 @@
               <option value="softgrand">Soft Grand</option>
               <option value="fmepiano">FM Electric Piano</option>
               <option value="celesta">Celesta</option>
+              <option value="ringbells">Ring Bell Keys</option>
+              <option value="fmring">FM Ring Piano</option>
             </optgroup>
             <optgroup label="Pads">
               <option value="pad">Soft Pad</option>
@@ -739,6 +888,9 @@
               <option value="analogpad">Warm Analog Pad</option>
               <option value="rainpad">Rain Pad</option>
               <option value="velvetstrings">Velvet Strings</option>
+              <option value="quadpad">Four Voice Pad</option>
+              <option value="spacedrone">Deep Space Drone</option>
+              <option value="glassnebula">Glass Nebula</option>
             </optgroup>
             <optgroup label="Leads">
               <option value="lead">Bright Lead</option>
@@ -753,6 +905,8 @@
               <option value="metallic">Metallic Lead</option>
               <option value="pwmlead">PWM Lead</option>
               <option value="fmscream">FM Screamer</option>
+              <option value="quadlead">Four Stack Lead</option>
+              <option value="ringlead">Ring Mod Lead</option>
             </optgroup>
             <optgroup label="Bass">
               <option value="bass">Deep Bass</option>
@@ -768,6 +922,8 @@
               <option value="acidbass">Acid Bass</option>
               <option value="reesebass">Reese Bass</option>
               <option value="fmslap">FM Slap Bass</option>
+              <option value="quadbass">Quad Sub Bass</option>
+              <option value="ringgrowl">Ring Growl Bass</option>
             </optgroup>
             <optgroup label="Plucks &amp; Fun">
               <option value="marimba">Marimba</option>
@@ -778,6 +934,8 @@
               <option value="triplepluck">Triple Pluck</option>
               <option value="arcadepluck">Arcade Pluck</option>
               <option value="windchime">Wind Chime</option>
+              <option value="ringpluck">Metallic Ring Pluck</option>
+              <option value="quadpluck">Quad Pluck</option>
             </optgroup>
           </select>
           <button type="button" class="mini-btn" id="diceBtn" aria-label="Randomize all controls">🎲 Surprise me</button>
@@ -838,6 +996,23 @@
             <button type="button" class="wave-btn" data-osc3oct="0">0</button>
             <button type="button" class="wave-btn" data-osc3oct="1">+1</button>
           </div>
+          <p class="row-label">Oscillator 4</p>
+          <div class="wave-row" id="wave4Row">
+            <button type="button" class="wave-btn" data-wave4="sine">Sine</button>
+            <button type="button" class="wave-btn" data-wave4="triangle">Triangle</button>
+            <button type="button" class="wave-btn" data-wave4="square">Square</button>
+            <button type="button" class="wave-btn" data-wave4="sawtooth">Sawtooth</button>
+          </div>
+          <div class="toggle-row">
+            <div class="t-label">Fourth voice<small>Oscillator 4 on or off — a fourth layer, and the ring-modulation source</small></div>
+            <button type="button" class="switch" id="osc4Toggle" role="switch" aria-checked="false" aria-label="Fourth oscillator on or off"></button>
+          </div>
+          <p class="row-label">Osc 4 octave</p>
+          <div class="wave-row" id="osc4OctRow">
+            <button type="button" class="wave-btn" data-osc4oct="-1">−1</button>
+            <button type="button" class="wave-btn" data-osc4oct="0">0</button>
+            <button type="button" class="wave-btn" data-osc4oct="1">+1</button>
+          </div>
           <div class="toggle-row">
             <div class="t-label">Second voice<small>Oscillator 2 on or off — it thickens the sound</small></div>
             <button type="button" class="switch" id="detuneToggle" role="switch" aria-checked="true" aria-label="Second oscillator on or off"></button>
@@ -891,8 +1066,26 @@
               <div class="knob-val" id="noiseLevelVal"></div>
               <input type="range" id="noiseLevel" class="knob-src" min="0" max="100" step="1" value="0" tabindex="-1" aria-hidden="true" />
             </div>
+            <div class="knob-cell">
+              <div class="knob" data-target="osc4Level" role="slider" tabindex="0" aria-label="Oscillator 4 level, drag up or down to turn"></div>
+              <div class="knob-name">Osc 4 Level</div>
+              <div class="knob-val" id="osc4LevelVal"></div>
+              <input type="range" id="osc4Level" class="knob-src" min="0" max="100" step="1" value="35" tabindex="-1" aria-hidden="true" />
+            </div>
+            <div class="knob-cell">
+              <div class="knob" data-target="osc4Detune" role="slider" tabindex="0" aria-label="Oscillator 4 detune, drag up or down to turn"></div>
+              <div class="knob-name">Osc 4 Tune</div>
+              <div class="knob-val" id="osc4DetuneVal"></div>
+              <input type="range" id="osc4Detune" class="knob-src" min="-50" max="50" step="1" value="0" tabindex="-1" aria-hidden="true" />
+            </div>
+            <div class="knob-cell">
+              <div class="knob" data-target="ringAmt" role="slider" tabindex="0" aria-label="Ring modulation amount, oscillator 4 multiplying oscillator 1, drag up or down to turn"></div>
+              <div class="knob-name">Ring Mod</div>
+              <div class="knob-val" id="ringAmtVal"></div>
+              <input type="range" id="ringAmt" class="knob-src" min="0" max="100" step="1" value="0" tabindex="-1" aria-hidden="true" />
+            </div>
           </div>
-          <p class="knob-hint">Drag a knob up or down to turn it — arrow keys work too. FM lets Oscillator 2 shake Oscillator 1's pitch for bells and growls.</p>
+          <p class="knob-hint">Drag a knob up or down to turn it — arrow keys work too. FM lets Oscillator 2 shake Oscillator 1's pitch for bells and growls; Ring Mod multiplies Oscillator 1 by Oscillator 4 for metallic, bell-like tones.</p>
         </section>
 
         <section class="card" aria-label="Envelope">
@@ -1113,6 +1306,7 @@
       var NEUTRAL = {
         wave2: "sine", oscMix: 50, subLevel: 0, pulseWidth: 50, noiseLevel: 0,
         wave3: "sawtooth", osc3On: false, osc3Level: 40, osc3Detune: 0, osc3Oct: 0, fmAmt: 0,
+        wave4: "sine", osc4On: false, osc4Level: 35, osc4Detune: 0, osc4Oct: 0, ringAmt: 0,
         filterType: "lowpass", fEnvAmt: 0, fEnvAttack: 0.01, fEnvDecay: 0.3, keyTrack: 0,
         lfoTarget: "pitch", lfo2Rate: 0.3, lfo2Depth: 0, glide: 0,
         reverbSize: 35, reverbMix: 0, chorusRate: 0.8, chorusDepth: 30, chorusMix: 0, drive: 0
@@ -1213,7 +1407,22 @@
         reesebass: P({ wave: "sawtooth", wave2: "sawtooth", detuneOn: true, detune: 18, oscMix: 50, wave3: "sawtooth", osc3On: true, osc3Level: 48, osc3Detune: -18, osc3Oct: 0, subLevel: 35, attack: 0.006, decay: 0.4, sustain: 65, release: 0.16, cutoffHz: 700, resonance: 1.5, keyTrack: 20, drive: 14, lfoRate: 0, lfoDepth: 0, echoTime: 0.16, echoMix: 0, volume: 80 }),
         fmslap: P({ wave: "triangle", wave2: "sine", detuneOn: true, detune: 0, oscMix: 55, fmAmt: 70, wave3: "sine", osc3On: true, osc3Level: 25, osc3Detune: 0, osc3Oct: -1, subLevel: 25, attack: 0.003, decay: 0.3, sustain: 10, release: 0.1, cutoffHz: 2400, resonance: 3, fEnvAmt: 55, fEnvAttack: 0.003, fEnvDecay: 0.2, keyTrack: 50, drive: 10, lfoRate: 0, lfoDepth: 0, echoTime: 0.12, echoMix: 5, volume: 78 }),
         arcadepluck: P({ wave: "square", wave2: "square", detuneOn: true, detune: 4, oscMix: 45, pulseWidth: 25, wave3: "square", osc3On: true, osc3Level: 32, osc3Detune: 0, osc3Oct: 1, attack: 0.003, decay: 0.22, sustain: 0, release: 0.12, cutoffHz: 6800, resonance: 2, keyTrack: 40, fEnvAmt: 40, fEnvAttack: 0.003, fEnvDecay: 0.15, glide: 0.01, lfoRate: 0, lfoDepth: 0, echoTime: 0.15, echoMix: 18, volume: 64 }),
-        windchime: P({ wave: "sine", wave2: "sine", detuneOn: true, detune: 0, oscMix: 50, fmAmt: 34, noiseLevel: 10, wave3: "sine", osc3On: true, osc3Level: 38, osc3Detune: 11, osc3Oct: 1, attack: 0.004, decay: 1.3, sustain: 0, release: 2.0, filterType: "bandpass", cutoffHz: 2600, resonance: 2.5, keyTrack: 55, lfoRate: 0, lfoDepth: 0, echoTime: 0.42, echoMix: 30, reverbSize: 78, reverbMix: 42, volume: 68 })
+        windchime: P({ wave: "sine", wave2: "sine", detuneOn: true, detune: 0, oscMix: 50, fmAmt: 34, noiseLevel: 10, wave3: "sine", osc3On: true, osc3Level: 38, osc3Detune: 11, osc3Oct: 1, attack: 0.004, decay: 1.3, sustain: 0, release: 2.0, filterType: "bandpass", cutoffHz: 2600, resonance: 2.5, keyTrack: 55, lfoRate: 0, lfoDepth: 0, echoTime: 0.42, echoMix: 30, reverbSize: 78, reverbMix: 42, volume: 68 }),
+        /* ---- v8: fourth oscillator & ring modulation showcase (82 total) ---- */
+        quadorgan: P({ wave: "square", wave2: "square", detuneOn: true, detune: 3, oscMix: 50, wave3: "square", osc3On: true, osc3Level: 40, osc3Detune: 2, osc3Oct: 1, wave4: "sine", osc4On: true, osc4Level: 35, osc4Detune: 0, osc4Oct: -1, subLevel: 30, attack: 0.02, decay: 0.06, sustain: 100, release: 0.3, cutoffHz: 5600, resonance: 0.7, keyTrack: 15, lfoRate: 0, lfoDepth: 0, echoTime: 0.3, echoMix: 12, reverbSize: 85, reverbMix: 38, chorusRate: 0.5, chorusDepth: 25, chorusMix: 12, volume: 62 }),
+        ringchoir: P({ wave: "triangle", wave2: "triangle", detuneOn: true, detune: 9, oscMix: 50, wave3: "sine", osc3On: true, osc3Level: 32, osc3Detune: 5, osc3Oct: 1, wave4: "sine", osc4On: true, osc4Level: 28, osc4Detune: -6, osc4Oct: 1, ringAmt: 10, attack: 1.0, decay: 1.0, sustain: 82, release: 2.6, cutoffHz: 1450, resonance: 0.6, keyTrack: 20, lfoRate: 0.35, lfoDepth: 3, lfo2Rate: 0.12, lfo2Depth: 30, echoTime: 0.44, echoMix: 24, reverbSize: 86, reverbMix: 44, chorusRate: 0.5, chorusDepth: 50, chorusMix: 32, volume: 72 }),
+        templebells: P({ wave: "sine", wave2: "sine", detuneOn: true, detune: 0, oscMix: 50, fmAmt: 40, wave3: "sine", osc3On: true, osc3Level: 34, osc3Detune: 4, osc3Oct: 1, wave4: "sine", osc4On: true, osc4Level: 30, osc4Detune: 9, osc4Oct: 1, ringAmt: 48, attack: 0.002, decay: 1.6, sustain: 0, release: 2.6, cutoffHz: 12500, resonance: 0.8, keyTrack: 42, lfoRate: 0, lfoDepth: 0, echoTime: 0.4, echoMix: 30, reverbSize: 84, reverbMix: 46, volume: 68 }),
+        ringbells: P({ wave: "sine", wave2: "triangle", detuneOn: true, detune: 5, oscMix: 40, fmAmt: 25, wave3: "sine", osc3On: true, osc3Level: 26, osc3Detune: 6, osc3Oct: 1, wave4: "sine", osc4On: true, osc4Level: 32, osc4Detune: 0, osc4Oct: 1, ringAmt: 55, attack: 0.003, decay: 1.3, sustain: 0, release: 1.8, cutoffHz: 11000, resonance: 0.9, keyTrack: 38, lfoRate: 0, lfoDepth: 0, echoTime: 0.34, echoMix: 26, reverbSize: 58, reverbMix: 28, volume: 70 }),
+        fmring: P({ wave: "triangle", wave2: "sine", detuneOn: true, detune: 0, oscMix: 55, fmAmt: 50, wave3: "triangle", osc3On: true, osc3Level: 20, osc3Detune: 0, osc3Oct: 0, wave4: "triangle", osc4On: true, osc4Level: 26, osc4Detune: 3, osc4Oct: 0, ringAmt: 30, attack: 0.003, decay: 1.1, sustain: 18, release: 0.8, cutoffHz: 3600, resonance: 0.9, keyTrack: 42, fEnvAmt: 28, fEnvAttack: 0.003, fEnvDecay: 0.45, lfoRate: 0, lfoDepth: 0, echoTime: 0.22, echoMix: 11, reverbSize: 42, reverbMix: 17, chorusRate: 0.7, chorusDepth: 25, chorusMix: 10, volume: 72 }),
+        quadpad: P({ wave: "sawtooth", wave2: "triangle", detuneOn: true, detune: 10, oscMix: 50, wave3: "square", osc3On: true, osc3Level: 30, osc3Detune: -12, osc3Oct: 0, pulseWidth: 40, wave4: "sawtooth", osc4On: true, osc4Level: 35, osc4Detune: 14, osc4Oct: 0, attack: 1.2, decay: 1.1, sustain: 84, release: 2.6, cutoffHz: 1000, resonance: 0.7, keyTrack: 18, lfoRate: 0.3, lfoDepth: 3, lfo2Rate: 0.13, lfo2Depth: 32, echoTime: 0.42, echoMix: 22, reverbSize: 66, reverbMix: 33, chorusRate: 0.5, chorusDepth: 45, chorusMix: 28, volume: 70 }),
+        spacedrone: P({ wave: "sine", wave2: "sine", detuneOn: true, detune: 5, oscMix: 45, wave3: "sine", osc3On: true, osc3Level: 50, osc3Detune: 0, osc3Oct: -1, wave4: "sine", osc4On: true, osc4Level: 20, osc4Detune: 7, osc4Oct: 1, ringAmt: 20, subLevel: 30, attack: 1.5, decay: 1.3, sustain: 90, release: 3.0, cutoffHz: 520, resonance: 1.1, keyTrack: 12, lfoRate: 0.14, lfoDepth: 2, lfo2Rate: 0.08, lfo2Depth: 50, glide: 0.1, echoTime: 0.5, echoMix: 18, reverbSize: 80, reverbMix: 36, volume: 74 }),
+        glassnebula: P({ wave: "triangle", wave2: "sine", detuneOn: true, detune: 7, oscMix: 45, fmAmt: 18, wave3: "sine", osc3On: true, osc3Level: 28, osc3Detune: -4, osc3Oct: 1, wave4: "sine", osc4On: true, osc4Level: 24, osc4Detune: 8, osc4Oct: 1, ringAmt: 32, attack: 1.4, decay: 1.2, sustain: 80, release: 2.9, filterType: "bandpass", cutoffHz: 2200, resonance: 3, keyTrack: 45, lfoRate: 0.25, lfoDepth: 3, lfo2Rate: 0.1, lfo2Depth: 55, echoTime: 0.46, echoMix: 25, reverbSize: 76, reverbMix: 40, chorusRate: 0.45, chorusDepth: 38, chorusMix: 22, volume: 70 }),
+        quadlead: P({ wave: "sawtooth", wave2: "sawtooth", detuneOn: true, detune: 6, oscMix: 50, wave3: "sawtooth", osc3On: true, osc3Level: 40, osc3Detune: -8, osc3Oct: 0, wave4: "sawtooth", osc4On: true, osc4Level: 38, osc4Detune: 10, osc4Oct: 0, attack: 0.009, decay: 0.2, sustain: 82, release: 0.19, cutoffHz: 6200, resonance: 3, keyTrack: 32, fEnvAmt: 28, fEnvAttack: 0.007, fEnvDecay: 0.26, lfoRate: 5.3, lfoDepth: 6, glide: 0.03, echoTime: 0.2, echoMix: 15, chorusRate: 0.85, chorusDepth: 32, chorusMix: 14, volume: 63 }),
+        ringlead: P({ wave: "square", wave2: "square", detuneOn: true, detune: 4, oscMix: 50, pulseWidth: 45, wave3: "sawtooth", osc3On: true, osc3Level: 25, osc3Detune: -5, osc3Oct: 0, wave4: "square", osc4On: true, osc4Level: 30, osc4Detune: 0, osc4Oct: 0, ringAmt: 58, attack: 0.007, decay: 0.18, sustain: 78, release: 0.17, cutoffHz: 5800, resonance: 2.5, keyTrack: 38, fEnvAmt: 30, fEnvAttack: 0.005, fEnvDecay: 0.22, lfoRate: 5.6, lfoDepth: 7, drive: 8, glide: 0.02, echoTime: 0.18, echoMix: 14, volume: 62 }),
+        quadbass: P({ wave: "triangle", wave2: "sine", detuneOn: true, detune: 2, oscMix: 32, wave3: "sine", osc3On: true, osc3Level: 55, osc3Detune: 0, osc3Oct: -1, wave4: "sine", osc4On: true, osc4Level: 40, osc4Detune: 3, osc4Oct: -1, subLevel: 40, attack: 0.005, decay: 0.32, sustain: 56, release: 0.15, cutoffHz: 460, resonance: 2.2, fEnvAmt: 32, fEnvAttack: 0.005, fEnvDecay: 0.26, keyTrack: 28, drive: 10, lfoRate: 0, lfoDepth: 0, echoTime: 0.17, echoMix: 0, volume: 81 }),
+        ringgrowl: P({ wave: "sawtooth", wave2: "square", detuneOn: true, detune: 0, oscMix: 58, fmAmt: 35, wave3: "square", osc3On: true, osc3Level: 25, osc3Detune: 0, osc3Oct: -1, wave4: "sawtooth", osc4On: true, osc4Level: 30, osc4Detune: 0, osc4Oct: 0, ringAmt: 62, subLevel: 25, attack: 0.004, decay: 0.27, sustain: 24, release: 0.11, cutoffHz: 650, resonance: 9, fEnvAmt: 70, fEnvAttack: 0.004, fEnvDecay: 0.24, keyTrack: 50, drive: 22, lfoRate: 0, lfoDepth: 0, echoTime: 0.15, echoMix: 0, volume: 78 }),
+        ringpluck: P({ wave: "triangle", wave2: "sine", detuneOn: true, detune: 0, oscMix: 50, fmAmt: 30, wave3: "sine", osc3On: true, osc3Level: 24, osc3Detune: 5, osc3Oct: 1, wave4: "sine", osc4On: true, osc4Level: 30, osc4Detune: 0, osc4Oct: 1, ringAmt: 68, attack: 0.003, decay: 0.4, sustain: 0, release: 0.28, cutoffHz: 4200, resonance: 1.6, keyTrack: 42, fEnvAmt: 38, fEnvAttack: 0.003, fEnvDecay: 0.26, lfoRate: 0, lfoDepth: 0, echoTime: 0.19, echoMix: 15, reverbSize: 36, reverbMix: 13, volume: 71 }),
+        quadpluck: P({ wave: "square", wave2: "triangle", detuneOn: true, detune: 5, oscMix: 45, pulseWidth: 35, wave3: "triangle", osc3On: true, osc3Level: 35, osc3Detune: -6, osc3Oct: 1, wave4: "square", osc4On: true, osc4Level: 28, osc4Detune: -5, osc4Oct: 1, attack: 0.003, decay: 0.3, sustain: 3, release: 0.15, cutoffHz: 3400, resonance: 2.8, keyTrack: 38, fEnvAmt: 48, fEnvAttack: 0.003, fEnvDecay: 0.2, glide: 0.012, lfoRate: 0, lfoDepth: 0, echoTime: 0.18, echoMix: 19, reverbSize: 30, reverbMix: 10, volume: 67 })
       };
 
       /* ================= Audio graph ================= */
@@ -1409,7 +1618,7 @@
       function pwmTick() {
         if (!ctx || state.lfoTarget !== "pitch" || state.lfoDepth <= 0) { return; }
         var anyPulse = false;
-        active.forEach(function (v) { if (v.p1 || v.p2 || v.p3) { anyPulse = true; } });
+        active.forEach(function (v) { if (v.p1 || v.p2 || v.p3 || v.p4) { anyPulse = true; } });
         if (!anyPulse) { return; }
         var swing = Math.min(20, state.lfoDepth * 0.5);
         var w = state.pulseWidth + Math.sin(2 * Math.PI * state.lfoRate * ctx.currentTime) * swing;
@@ -1420,6 +1629,7 @@
             if (v.p1) { v.o1.setPeriodicWave(wave); }
             if (v.p2 && v.o2) { v.o2.setPeriodicWave(wave); }
             if (v.p3 && v.o3) { v.o3.setPeriodicWave(wave); }
+            if (v.p4 && v.o4) { v.o4.setPeriodicWave(wave); }
           } catch (e) {}
         });
       }
@@ -1469,6 +1679,7 @@
       function oscGain1() { return 0.72 * (1 - state.oscMix / 100); }
       function oscGain2() { return 0.72 * (state.oscMix / 100); }
       function osc3GainVal() { return 0.5 * (state.osc3Level / 100); }
+      function osc4GainVal() { return 0.42 * (state.osc4Level / 100); }
       function fmDepthHz(freq) { return (state.fmAmt / 100) * freq * 1.5; }
       function subGainVal() { return 0.38 * (state.subLevel / 100); }
       function noiseGainVal() { return 0.30 * (state.noiseLevel / 100); }
@@ -1478,6 +1689,7 @@
         try { lfoGain.disconnect(v.o1.detune); } catch (e) {}
         if (v.o2) { try { lfoGain.disconnect(v.o2.detune); } catch (e) {} }
         if (v.o3) { try { lfoGain.disconnect(v.o3.detune); } catch (e) {} }
+        if (v.o4) { try { lfoGain.disconnect(v.o4.detune); } catch (e) {} }
         if (v.sub) { try { lfoGain.disconnect(v.sub.detune); } catch (e) {} }
         try { lfoGain.disconnect(v.filter.frequency); } catch (e) {}
         try { lfoGain.disconnect(v.trem.gain); } catch (e) {}
@@ -1492,6 +1704,7 @@
             lfoGain.connect(v.o1.detune);
             if (v.o2) { lfoGain.connect(v.o2.detune); }
             if (v.o3) { lfoGain.connect(v.o3.detune); }
+            if (v.o4) { lfoGain.connect(v.o4.detune); }
             if (v.sub) { lfoGain.connect(v.sub.detune); }
           }
         } catch (e) {}
@@ -1500,7 +1713,7 @@
       function cleanupVoice(v) {
         unwireLfo(v);
         if (lfo2Gain) { try { lfo2Gain.disconnect(v.filter.frequency); } catch (e) {} }
-        var nodes = [v.o1, v.o2, v.o3, v.sub, v.noiseSrc, v.g1, v.g2, v.g3, v.gSub, v.gNoise, v.fmGain, v.filter, v.trem, v.env];
+        var nodes = [v.o1, v.o2, v.o3, v.o4, v.sub, v.noiseSrc, v.g1, v.g2, v.g3, v.g4, v.gSub, v.gNoise, v.fmGain, v.ringGain, v.rmDepth, v.filter, v.trem, v.env];
         for (var i = 0; i < nodes.length; i++) {
           if (nodes[i]) { try { nodes[i].disconnect(); } catch (e) {} }
         }
@@ -1509,6 +1722,7 @@
         try { v.o1.stop(when); } catch (e) {}
         if (v.o2) { try { v.o2.stop(when); } catch (e) {} }
         if (v.o3) { try { v.o3.stop(when); } catch (e) {} }
+        if (v.o4) { try { v.o4.stop(when); } catch (e) {} }
         if (v.sub) { try { v.sub.stop(when); } catch (e) {} }
         if (v.noiseSrc) { try { v.noiseSrc.stop(when); } catch (e) {} }
       }
@@ -1605,7 +1819,19 @@
         applyWave(o1, state.wave, state.pulseWidth);
         setOscFreq(o1, freq, t);
         o1.detune.value = bendCents;
-        o1.connect(g1); g1.connect(filter);
+        o1.connect(g1);
+        // Ring modulation: when Oscillator 4 is on and Ring Mod is up,
+        // Osc 1's path runs through a gain that Osc 4 will multiply —
+        // base (1 - depth) plus Osc 4 x depth, so depth 100 is true
+        // ring modulation and lower values blend toward plain Osc 1.
+        var ringGain = null, rmDepth = null;
+        if (state.osc4On && state.ringAmt > 0) {
+          ringGain = ctx.createGain();
+          ringGain.gain.value = 1 - state.ringAmt / 100;
+          g1.connect(ringGain); ringGain.connect(filter);
+        } else {
+          g1.connect(filter);
+        }
 
         var o2 = null, g2 = null;
         if (state.detuneOn) {
@@ -1627,6 +1853,23 @@
           setOscFreq(o3, freq * Math.pow(2, state.osc3Oct), t);
           o3.detune.value = state.osc3Detune + bendCents;
           o3.connect(g3); g3.connect(filter);
+        }
+
+        // Oscillator 4: a fourth independent layer with its own waveform,
+        // level, detune and octave shift — and, when the ring path above
+        // exists, it doubles as the ring-modulation source for Osc 1.
+        var o4 = null, g4 = null;
+        if (state.osc4On) {
+          g4 = ctx.createGain(); g4.gain.value = osc4GainVal();
+          o4 = ctx.createOscillator();
+          applyWave(o4, state.wave4, state.pulseWidth);
+          setOscFreq(o4, freq * Math.pow(2, state.osc4Oct), t);
+          o4.detune.value = state.osc4Detune + bendCents;
+          o4.connect(g4); g4.connect(filter);
+          if (ringGain) {
+            rmDepth = ctx.createGain(); rmDepth.gain.value = state.ringAmt / 100;
+            o4.connect(rmDepth); rmDepth.connect(ringGain.gain);
+          }
         }
 
         // FM: Oscillator 2 (when present) also modulates Oscillator 1's
@@ -1659,11 +1902,12 @@
         }
 
         var voice = {
-          midi: midi, o1: o1, o2: o2, o3: o3, sub: sub, noiseSrc: noiseSrc,
-          g1: g1, g2: g2, g3: g3, gSub: gSub, gNoise: gNoise, fmGain: fmGain,
+          midi: midi, o1: o1, o2: o2, o3: o3, o4: o4, sub: sub, noiseSrc: noiseSrc,
+          g1: g1, g2: g2, g3: g3, g4: g4, gSub: gSub, gNoise: gNoise, fmGain: fmGain,
+          ringGain: ringGain, rmDepth: rmDepth,
           filter: filter, trem: trem, env: env, baseCutoff: base,
           p1: state.wave === "square", p2: state.detuneOn && state.wave2 === "square",
-          p3: state.osc3On && state.wave3 === "square"
+          p3: state.osc3On && state.wave3 === "square", p4: state.osc4On && state.wave4 === "square"
         };
         wireLfo(voice);
         try { lfo2Gain.connect(filter.frequency); } catch (e) {}
@@ -1671,6 +1915,7 @@
         o1.start(t);
         if (o2) { o2.start(t); }
         if (o3) { o3.start(t); }
+        if (o4) { o4.start(t); }
         if (sub) { sub.start(t); }
         if (noiseSrc) { noiseSrc.start(t); }
 
@@ -2000,6 +2245,7 @@
             v.o1.detune.setTargetAtTime(bendCents, t, 0.012);
             if (v.o2) { v.o2.detune.setTargetAtTime(state.detune + bendCents, t, 0.012); }
             if (v.o3) { v.o3.detune.setTargetAtTime(state.osc3Detune + bendCents, t, 0.012); }
+            if (v.o4) { v.o4.detune.setTargetAtTime(state.osc4Detune + bendCents, t, 0.012); }
             if (v.sub) { v.sub.detune.setTargetAtTime(bendCents, t, 0.012); }
           } catch (e) {}
         });
@@ -2074,6 +2320,8 @@
         pulseWidth: $("pulseWidth"), noiseLevel: $("noiseLevel"),
         osc3Level: $("osc3Level"), osc3Detune: $("osc3Detune"), fmAmt: $("fmAmt"),
         osc3Toggle: $("osc3Toggle"),
+        osc4Level: $("osc4Level"), osc4Detune: $("osc4Detune"), ringAmt: $("ringAmt"),
+        osc4Toggle: $("osc4Toggle"),
         attack: $("attack"), decay: $("decay"), sustain: $("sustain"), release: $("release"),
         cutoff: $("cutoff"), resonance: $("resonance"), keyTrack: $("keyTrack"),
         fEnvAmt: $("fEnvAmt"), fEnvAttack: $("fEnvAttack"), fEnvDecay: $("fEnvDecay"),
@@ -2097,6 +2345,9 @@
         $("osc3LevelVal").textContent = state.osc3Level === 0 ? "off" : state.osc3Level + "%";
         $("osc3DetuneVal").textContent = (state.osc3Detune > 0 ? "+" : "") + state.osc3Detune + " cents";
         $("fmAmtVal").textContent = state.fmAmt === 0 ? "off" : state.fmAmt + "%";
+        $("osc4LevelVal").textContent = state.osc4Level === 0 ? "off" : state.osc4Level + "%";
+        $("osc4DetuneVal").textContent = (state.osc4Detune > 0 ? "+" : "") + state.osc4Detune + " cents";
+        $("ringAmtVal").textContent = state.ringAmt === 0 ? "off" : state.ringAmt + "%";
         $("attackVal").textContent = fmtSec(state.attack);
         $("decayVal").textContent = fmtSec(state.decay);
         $("sustainVal").textContent = state.sustain + "%";
@@ -2137,6 +2388,10 @@
         els.osc3Detune.value = state.osc3Detune;
         els.fmAmt.value = state.fmAmt;
         els.osc3Toggle.setAttribute("aria-checked", state.osc3On ? "true" : "false");
+        els.osc4Level.value = state.osc4Level;
+        els.osc4Detune.value = state.osc4Detune;
+        els.ringAmt.value = state.ringAmt;
+        els.osc4Toggle.setAttribute("aria-checked", state.osc4On ? "true" : "false");
         els.attack.value = state.attack;
         els.decay.value = state.decay;
         els.sustain.value = state.sustain;
@@ -2168,6 +2423,8 @@
         document.querySelectorAll("#wave2Row .wave-btn").forEach(function (b) { b.classList.toggle("active", b.dataset.wave2 === state.wave2); });
         document.querySelectorAll("#wave3Row .wave-btn").forEach(function (b) { b.classList.toggle("active", b.dataset.wave3 === state.wave3); });
         document.querySelectorAll("#osc3OctRow .wave-btn").forEach(function (b) { b.classList.toggle("active", parseInt(b.dataset.osc3oct, 10) === state.osc3Oct); });
+        document.querySelectorAll("#wave4Row .wave-btn").forEach(function (b) { b.classList.toggle("active", b.dataset.wave4 === state.wave4); });
+        document.querySelectorAll("#osc4OctRow .wave-btn").forEach(function (b) { b.classList.toggle("active", parseInt(b.dataset.osc4oct, 10) === state.osc4Oct); });
         document.querySelectorAll("#filterTypeRow .wave-btn").forEach(function (b) { b.classList.toggle("active", b.dataset.ftype === state.filterType); });
         document.querySelectorAll("#lfoTargetRow .wave-btn").forEach(function (b) { b.classList.toggle("active", b.dataset.ltarget === state.lfoTarget); });
         document.querySelectorAll("#arpPatternRow .wave-btn").forEach(function (b) {
@@ -2219,6 +2476,7 @@
             if (v.p1) { v.o1.setPeriodicWave(wave); }
             if (v.p2 && v.o2) { v.o2.setPeriodicWave(wave); }
             if (v.p3 && v.o3) { v.o3.setPeriodicWave(wave); }
+            if (v.p4 && v.o4) { v.o4.setPeriodicWave(wave); }
           } catch (e) {}
         });
       });
@@ -2233,6 +2491,22 @@
       });
       bindSlider(els.fmAmt, "fmAmt", I, function () {
         active.forEach(function (v) { if (v.fmGain) { try { v.fmGain.gain.setTargetAtTime(fmDepthHz(midiFreq(v.midi)), ctx.currentTime, 0.02); } catch (e) {} } });
+      });
+      bindSlider(els.osc4Level, "osc4Level", I, function () {
+        active.forEach(function (v) { if (v.g4) { try { v.g4.gain.setTargetAtTime(osc4GainVal(), ctx.currentTime, 0.02); } catch (e) {} } });
+      });
+      bindSlider(els.osc4Detune, "osc4Detune", I, function () {
+        active.forEach(function (v) { if (v.o4) { try { v.o4.detune.setTargetAtTime(state.osc4Detune + bendCents, ctx.currentTime, 0.02); } catch (e) {} } });
+      });
+      bindSlider(els.ringAmt, "ringAmt", I, function () {
+        active.forEach(function (v) {
+          if (v.ringGain && v.rmDepth) {
+            try {
+              v.ringGain.gain.setTargetAtTime(1 - state.ringAmt / 100, ctx.currentTime, 0.02);
+              v.rmDepth.gain.setTargetAtTime(state.ringAmt / 100, ctx.currentTime, 0.02);
+            } catch (e) {}
+          }
+        });
       });
       bindSlider(els.attack, "attack", F);
       bindSlider(els.decay, "decay", F);
@@ -2303,6 +2577,26 @@
           markCustom();
         });
       });
+      document.querySelectorAll("#wave4Row .wave-btn").forEach(function (b) {
+        b.addEventListener("click", function () {
+          ensureAudio();
+          state.wave4 = b.dataset.wave4;
+          active.forEach(function (v) {
+            if (v.o4) { applyWave(v.o4, state.wave4, state.pulseWidth); }
+            v.p4 = state.osc4On && state.wave4 === "square";
+          });
+          refreshControlUI();
+          markCustom();
+        });
+      });
+      document.querySelectorAll("#osc4OctRow .wave-btn").forEach(function (b) {
+        b.addEventListener("click", function () {
+          ensureAudio();
+          state.osc4Oct = parseInt(b.dataset.osc4oct, 10);
+          refreshControlUI();
+          markCustom();
+        });
+      });
       document.querySelectorAll("#filterTypeRow .wave-btn").forEach(function (b) {
         b.addEventListener("click", function () {
           ensureAudio();
@@ -2334,6 +2628,13 @@
         ensureAudio();
         state.osc3On = !state.osc3On;
         els.osc3Toggle.setAttribute("aria-checked", state.osc3On ? "true" : "false");
+        markCustom();
+      });
+
+      els.osc4Toggle.addEventListener("click", function () {
+        ensureAudio();
+        state.osc4On = !state.osc4On;
+        els.osc4Toggle.setAttribute("aria-checked", state.osc4On ? "true" : "false");
         markCustom();
       });
 
@@ -2397,6 +2698,12 @@
           osc3Detune: rndi(-20, 20),
           osc3Oct: pick([-1, 0, 0, 1]),
           fmAmt: Math.random() < 0.55 ? 0 : rndi(5, 60),
+          wave4: pick(["sine", "triangle", "square", "sawtooth"]),
+          osc4On: Math.random() < 0.35,
+          osc4Level: rndi(15, 60),
+          osc4Detune: rndi(-20, 20),
+          osc4Oct: pick([-1, 0, 0, 1]),
+          ringAmt: Math.random() < 0.7 ? 0 : rndi(10, 55),
           subLevel: Math.random() < 0.3 ? 0 : rndi(0, 40),
           pulseWidth: rndi(15, 85),
           noiseLevel: Math.random() < 0.5 ? 0 : rndi(0, 18),
@@ -2572,6 +2879,26 @@
       });
       window.addEventListener("orientationchange", function () {
         window.setTimeout(function () { window.scrollTo(0, 0); }, 60);
+      });
+
+      /* ================= Color themes =================
+         The picker only swaps the data-theme attribute on <html>; every
+         color on the page already flows from the CSS variables the theme
+         rules override. Session-only, like everything else on this page —
+         nothing is stored. The browser-chrome color follows the theme. */
+      var themeSelect = $("themeSelect");
+      var themeMetas = document.querySelectorAll('meta[name="theme-color"]');
+      var THEME_BG = { midnight: "#0b1220", forest: "#0e1a12", burgundy: "#241019", slate: "#eceff3" };
+      themeSelect.addEventListener("change", function () {
+        var v = themeSelect.value;
+        if (v === "parchment" || !THEME_BG[v]) {
+          document.documentElement.removeAttribute("data-theme");
+          if (themeMetas[0]) { themeMetas[0].setAttribute("content", "#f6f1e7"); }
+          if (themeMetas[1]) { themeMetas[1].setAttribute("content", "#171310"); }
+        } else {
+          document.documentElement.setAttribute("data-theme", v);
+          themeMetas.forEach(function (m) { m.setAttribute("content", THEME_BG[v]); });
+        }
       });
 
       buildKeyboard();
