@@ -566,12 +566,14 @@
           gap: 6px;
         }
         .topbar { order: 0; flex: 0 0 auto; padding: 0; }
-        .home-pill { min-height: 32px; padding: 4px 12px; font-size: 13.5px; box-shadow: none; }
+        .home-pill { min-height: 28px; padding: 3px 12px; font-size: 13px; box-shadow: none; }
         header { display: none; }
-        section[aria-label="Presets"] { order: 1; flex: 0 0 auto; margin-top: 0; padding: 6px 10px; }
+        section[aria-label="Presets"] { order: 1; flex: 0 0 auto; margin-top: 0; padding: 4px 8px; }
         section[aria-label="Presets"] h2 { display: none; }
-        #presetSelect { min-height: 40px; }
-        .mini-btn { min-height: 40px; }
+        .preset-bar { gap: 6px; }
+        .preset-bar label { font-size: 14px; }
+        #presetSelect { min-height: 34px; padding: 4px 10px; font-size: 14.5px; }
+        .mini-btn { min-height: 34px; padding: 4px 10px; font-size: 14px; }
         .controls {
           order: 2;
           flex: 0 1 auto;
@@ -579,41 +581,62 @@
           flex-direction: row;
           overflow-x: auto;
           overflow-y: hidden;
-          gap: 8px;
+          gap: 6px;
           margin-top: 0;
-          padding-bottom: 4px;
-          max-height: 46%;
+          padding-bottom: 3px;
+          max-height: 29%;
           -webkit-overflow-scrolling: touch;
         }
         .controls .card {
-          flex: 0 0 320px;
+          flex: 0 0 252px;
           margin-top: 0;
-          padding: 10px 12px;
+          padding: 7px 9px;
           overflow-y: auto;
           border-radius: 12px;
         }
-        .controls .card h2 { font-size: 16px; margin-bottom: 6px; }
-        .knob { width: 58px; height: 58px; }
-        .knob.knob-lg { width: 68px; height: 68px; }
-        .knob-grid { gap: 8px 4px; padding: 4px 0 2px; }
-        .knob-name { font-size: 11px; }
-        .knob-val { font-size: 12.5px; }
-        .wave-btn { min-height: 38px; font-size: 13.5px; }
+        .controls .card h2 { font-size: 15px; margin-bottom: 4px; }
+        .knob { width: 44px; height: 44px; }
+        .knob.knob-lg { width: 52px; height: 52px; }
+        .knob-grid { grid-template-columns: repeat(auto-fit, minmax(64px, 1fr)); gap: 6px 3px; padding: 3px 0 2px; }
+        .knob-cell { gap: 2px; }
+        .knob-name { font-size: 10px; }
+        .knob-val { font-size: 11.5px; min-height: 14px; }
+        .knob-hint { display: none; }
+        .row-label { font-size: 11px; margin: 1px 0 4px; }
+        .wave-row { gap: 4px; margin-bottom: 8px; }
+        .wave-btn { min-height: 30px; padding: 4px 2px; font-size: 12.5px; border-radius: 8px; }
+        .toggle-row { padding: 3px 0 1px; }
+        .toggle-row .t-label { font-size: 12.5px; }
+        .toggle-row .t-label small { font-size: 11px; }
+        .switch { width: 50px; height: 30px; }
+        .switch::after { width: 22px; height: 22px; }
+        .switch[aria-checked="true"]::after { left: 23px; }
+        .slider-row { padding: 2px 0; }
+        .slider-row label { flex-basis: 76px; font-size: 12.5px; }
+        .slider-row .val { flex-basis: 58px; font-size: 12.5px; }
+        input[type="range"] { height: 24px; }
+        input[type="range"]::-webkit-slider-thumb { width: 22px; height: 22px; margin-top: -7px; }
+        input[type="range"]::-moz-range-thumb { width: 18px; height: 18px; }
         section[aria-label="Keyboard"] {
           order: 3;
           flex: 1 1 auto;
           min-height: 0;
           margin-top: 0;
-          padding: 8px 10px 10px;
+          padding: 6px 8px 8px;
           display: flex;
           flex-direction: column;
           border-radius: 12px;
         }
-        .kb-head { margin-bottom: 6px; }
-        .oct-btn { width: 42px; height: 42px; font-size: 22px; border-radius: 10px; }
-        .kb-flex { flex: 1 1 auto; min-height: 0; }
+        .kb-head { margin-bottom: 5px; gap: 8px; flex-wrap: nowrap; }
+        .oct-btn { width: 38px; height: 38px; font-size: 20px; border-radius: 9px; }
+        .range-label { font-size: 15px; min-width: 74px; }
+        .range-sub { display: none; }
+        .now-playing { font-size: 13px; min-height: 0; }
+        .kb-flex { flex: 1 1 auto; min-height: 0; gap: 8px; }
         .keyboard { flex: 1 1 auto; height: auto; min-height: 0; }
-        .bend { flex-basis: 40px; }
+        .bend { flex-basis: 60px; }
+        .bend-thumb { height: 68px; left: 4px; right: 4px; }
+        .bend-label { font-size: 8.5px; bottom: 4px; }
         .fine-print { display: none; }
       }
     </style>
@@ -649,6 +672,9 @@
               <option value="harpsichord">Harpsichord</option>
               <option value="bell">Cathedral Bell</option>
               <option value="fmbell">FM Bell</option>
+              <option value="fmchime">FM Chime</option>
+              <option value="glassfm">Glass FM Keys</option>
+              <option value="crystalbells">Crystal Bells</option>
               <option value="kalimba">Kalimba</option>
               <option value="softgrand">Soft Grand</option>
             </optgroup>
@@ -664,6 +690,8 @@
               <option value="cosmic">Cosmic Sweep</option>
               <option value="aurora">Aurora Drift</option>
               <option value="deepdrone">Deep Drone</option>
+              <option value="triplepad">Triple Voice Pad</option>
+              <option value="harmonicpad">Harmonic Shimmer</option>
             </optgroup>
             <optgroup label="Leads">
               <option value="lead">Bright Lead</option>
@@ -673,6 +701,9 @@
               <option value="analogbrass">Analog Brass</option>
               <option value="theremin">Theremin Lead</option>
               <option value="triplestack">Triple Stack Lead</option>
+              <option value="stacklead">Deep Stack Lead</option>
+              <option value="fmbrass">FM Brass</option>
+              <option value="metallic">Metallic Lead</option>
             </optgroup>
             <optgroup label="Bass">
               <option value="bass">Deep Bass</option>
@@ -683,12 +714,16 @@
               <option value="subrunner">Sub Runner</option>
               <option value="roundbass">Round Bass</option>
               <option value="fmgrowl">FM Growl Bass</option>
+              <option value="substack">Sub Stack Bass</option>
+              <option value="fmwah">FM Wah Bass</option>
             </optgroup>
             <optgroup label="Plucks &amp; Fun">
               <option value="marimba">Marimba</option>
               <option value="banjo">Banjo Pluck</option>
               <option value="eightbit">8-Bit Hero</option>
               <option value="berlin">Berlin Sequence</option>
+              <option value="fmpluck">FM Pluck</option>
+              <option value="triplepluck">Triple Pluck</option>
             </optgroup>
           </select>
           <button type="button" class="mini-btn" id="diceBtn" aria-label="Randomize all controls">🎲 Surprise me</button>
@@ -1094,7 +1129,20 @@
         /* ---- v5: third oscillator & FM showcase presets (42 total) ---- */
         fmbell: P({ wave: "sine", wave2: "sine", detuneOn: true, detune: 0, oscMix: 55, fmAmt: 62, attack: 0.002, decay: 1.5, sustain: 0, release: 1.6, cutoffHz: 11000, resonance: 0.8, keyTrack: 35, lfoRate: 0, lfoDepth: 0, echoTime: 0.34, echoMix: 26, reverbSize: 55, reverbMix: 26, volume: 70 }),
         triplestack: P({ wave: "sawtooth", wave2: "sawtooth", detuneOn: true, detune: 7, oscMix: 50, wave3: "sawtooth", osc3On: true, osc3Level: 55, osc3Detune: -9, osc3Oct: 0, attack: 0.01, decay: 0.2, sustain: 82, release: 0.2, cutoffHz: 6800, resonance: 3.5, keyTrack: 30, fEnvAmt: 25, fEnvAttack: 0.008, fEnvDecay: 0.25, lfoRate: 5.2, lfoDepth: 5, echoTime: 0.2, echoMix: 16, chorusRate: 0.9, chorusDepth: 35, chorusMix: 18, volume: 64 }),
-        fmgrowl: P({ wave: "sawtooth", wave2: "square", detuneOn: true, detune: 0, oscMix: 60, fmAmt: 45, subLevel: 40, attack: 0.004, decay: 0.28, sustain: 30, release: 0.12, cutoffHz: 700, resonance: 8, fEnvAmt: 60, fEnvAttack: 0.004, fEnvDecay: 0.26, keyTrack: 45, drive: 20, lfoRate: 0, lfoDepth: 0, echoTime: 0.16, echoMix: 0, volume: 78 })
+        fmgrowl: P({ wave: "sawtooth", wave2: "square", detuneOn: true, detune: 0, oscMix: 60, fmAmt: 45, subLevel: 40, attack: 0.004, decay: 0.28, sustain: 30, release: 0.12, cutoffHz: 700, resonance: 8, fEnvAmt: 60, fEnvAttack: 0.004, fEnvDecay: 0.26, keyTrack: 45, drive: 20, lfoRate: 0, lfoDepth: 0, echoTime: 0.16, echoMix: 0, volume: 78 }),
+        /* ---- v6: presets built on the third oscillator & FM (54 total) ---- */
+        fmchime: P({ wave: "sine", wave2: "sine", detuneOn: true, detune: 0, oscMix: 50, fmAmt: 38, wave3: "sine", osc3On: true, osc3Level: 30, osc3Detune: 4, osc3Oct: 1, attack: 0.002, decay: 1.2, sustain: 0, release: 1.4, cutoffHz: 12000, resonance: 0.7, keyTrack: 40, lfoRate: 0, lfoDepth: 0, echoTime: 0.32, echoMix: 28, reverbSize: 60, reverbMix: 30, volume: 70 }),
+        glassfm: P({ wave: "triangle", wave2: "sine", detuneOn: true, detune: 0, oscMix: 45, fmAmt: 30, wave3: "sine", osc3On: true, osc3Level: 25, osc3Detune: -5, osc3Oct: 1, attack: 0.004, decay: 0.9, sustain: 25, release: 0.8, cutoffHz: 4200, resonance: 1, keyTrack: 35, lfoRate: 0, lfoDepth: 0, echoTime: 0.26, echoMix: 16, reverbSize: 48, reverbMix: 22, chorusRate: 0.7, chorusDepth: 30, chorusMix: 14, volume: 72 }),
+        crystalbells: P({ wave: "sine", wave2: "sine", detuneOn: true, detune: 6, oscMix: 40, fmAmt: 22, wave3: "sine", osc3On: true, osc3Level: 45, osc3Detune: 8, osc3Oct: 1, attack: 0.003, decay: 1.4, sustain: 0, release: 2.2, cutoffHz: 13000, resonance: 0.8, keyTrack: 45, lfoRate: 0, lfoDepth: 0, echoTime: 0.4, echoMix: 32, reverbSize: 80, reverbMix: 44, volume: 68 }),
+        triplepad: P({ wave: "triangle", wave2: "sawtooth", detuneOn: true, detune: 10, oscMix: 50, wave3: "triangle", osc3On: true, osc3Level: 50, osc3Detune: -11, osc3Oct: 0, attack: 1.2, decay: 1.1, sustain: 84, release: 2.6, cutoffHz: 1050, resonance: 0.6, lfoRate: 0.3, lfoDepth: 3, lfo2Rate: 0.14, lfo2Depth: 35, echoTime: 0.42, echoMix: 22, reverbSize: 68, reverbMix: 34, chorusRate: 0.45, chorusDepth: 42, chorusMix: 26, volume: 72 }),
+        harmonicpad: P({ wave: "sine", wave2: "triangle", detuneOn: true, detune: 8, oscMix: 45, wave3: "sine", osc3On: true, osc3Level: 38, osc3Detune: 5, osc3Oct: 1, attack: 1.5, decay: 1.3, sustain: 82, release: 3.0, cutoffHz: 1600, resonance: 0.8, keyTrack: 30, lfoRate: 0.25, lfoDepth: 3, lfo2Rate: 0.09, lfo2Depth: 50, echoTime: 0.46, echoMix: 26, reverbSize: 74, reverbMix: 36, chorusRate: 0.5, chorusDepth: 35, chorusMix: 20, volume: 70 }),
+        stacklead: P({ wave: "sawtooth", wave2: "sawtooth", detuneOn: true, detune: 6, oscMix: 50, wave3: "square", osc3On: true, osc3Level: 42, osc3Detune: 0, osc3Oct: -1, subLevel: 20, attack: 0.008, decay: 0.22, sustain: 80, release: 0.2, cutoffHz: 5200, resonance: 3, keyTrack: 35, fEnvAmt: 30, fEnvAttack: 0.006, fEnvDecay: 0.28, lfoRate: 5.4, lfoDepth: 6, glide: 0.03, echoTime: 0.2, echoMix: 15, chorusRate: 0.8, chorusDepth: 30, chorusMix: 12, volume: 64 }),
+        fmbrass: P({ wave: "sawtooth", wave2: "sawtooth", detuneOn: true, detune: 0, oscMix: 55, fmAmt: 28, wave3: "sawtooth", osc3On: true, osc3Level: 35, osc3Detune: 4, osc3Oct: 0, attack: 0.05, decay: 0.3, sustain: 76, release: 0.22, cutoffHz: 1500, resonance: 2.4, fEnvAmt: 65, fEnvAttack: 0.04, fEnvDecay: 0.35, keyTrack: 45, lfoRate: 4.6, lfoDepth: 4, echoTime: 0.18, echoMix: 10, reverbSize: 40, reverbMix: 14, volume: 68 }),
+        metallic: P({ wave: "square", wave2: "square", detuneOn: true, detune: 0, oscMix: 55, fmAmt: 78, wave3: "sawtooth", osc3On: true, osc3Level: 30, osc3Detune: -14, osc3Oct: 1, attack: 0.004, decay: 0.3, sustain: 55, release: 0.25, cutoffHz: 7500, resonance: 5, keyTrack: 40, fEnvAmt: 40, fEnvAttack: 0.004, fEnvDecay: 0.3, lfoRate: 6, lfoDepth: 8, drive: 14, echoTime: 0.17, echoMix: 14, volume: 62 }),
+        substack: P({ wave: "triangle", wave2: "sine", detuneOn: true, detune: 0, oscMix: 35, wave3: "sine", osc3On: true, osc3Level: 60, osc3Detune: 0, osc3Oct: -1, subLevel: 45, attack: 0.005, decay: 0.3, sustain: 58, release: 0.14, cutoffHz: 480, resonance: 2.5, fEnvAmt: 30, fEnvAttack: 0.005, fEnvDecay: 0.25, keyTrack: 30, drive: 10, lfoRate: 0, lfoDepth: 0, echoTime: 0.18, echoMix: 0, volume: 82 }),
+        fmwah: P({ wave: "sawtooth", wave2: "square", detuneOn: true, detune: 0, oscMix: 55, fmAmt: 55, wave3: "sawtooth", osc3On: true, osc3Level: 25, osc3Detune: 0, osc3Oct: 0, subLevel: 25, attack: 0.004, decay: 0.26, sustain: 22, release: 0.11, cutoffHz: 620, resonance: 11, fEnvAmt: 75, fEnvAttack: 0.006, fEnvDecay: 0.24, keyTrack: 55, drive: 16, lfoTarget: "filter", lfoRate: 2.2, lfoDepth: 14, echoTime: 0.15, echoMix: 4, volume: 78 }),
+        fmpluck: P({ wave: "triangle", wave2: "sine", detuneOn: true, detune: 0, oscMix: 50, fmAmt: 48, wave3: "sine", osc3On: true, osc3Level: 30, osc3Detune: 6, osc3Oct: 1, attack: 0.003, decay: 0.45, sustain: 0, release: 0.3, cutoffHz: 3800, resonance: 1.5, keyTrack: 40, fEnvAmt: 35, fEnvAttack: 0.003, fEnvDecay: 0.3, lfoRate: 0, lfoDepth: 0, echoTime: 0.18, echoMix: 14, reverbSize: 35, reverbMix: 12, volume: 72 }),
+        triplepluck: P({ wave: "square", wave2: "triangle", detuneOn: true, detune: 5, oscMix: 45, pulseWidth: 38, wave3: "triangle", osc3On: true, osc3Level: 40, osc3Detune: -7, osc3Oct: 1, attack: 0.003, decay: 0.32, sustain: 4, release: 0.16, cutoffHz: 3200, resonance: 3, keyTrack: 35, fEnvAmt: 50, fEnvAttack: 0.003, fEnvDecay: 0.22, glide: 0.015, lfoRate: 0, lfoDepth: 0, echoTime: 0.19, echoMix: 20, volume: 68 })
       };
 
       /* ================= Audio graph ================= */
